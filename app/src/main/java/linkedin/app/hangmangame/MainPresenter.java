@@ -1,27 +1,19 @@
 package linkedin.app.hangmangame;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.ArrayAdapter;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Random;
-
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 /**
  * Created by alvin2 on 2/17/17.
  */
 
-class MainPresenter implements WordsTask.WordsTaskListener {
+class MainPresenter implements WordsAsyncTask.WordsAsyncTaskListener {
 
     private MainPresenter.UI view;
     private HangmanModel hangmanModel;
@@ -160,7 +152,7 @@ class MainPresenter implements WordsTask.WordsTaskListener {
     }
 
     void changeLevelDifficulty(int positionLevel) {
-        WordsTask task = new WordsTask();
+        WordsAsyncTask task = new WordsAsyncTask();
         task.setWordsTaskListener(this);
         if (positionLevel == 0) {
             task.execute(API_URL);

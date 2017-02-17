@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.UI 
         presenter = new MainPresenter();
         presenter.setView(this, getApplicationContext());
         setupViews();
-        WordsTask task = new WordsTask();
+        WordsAsyncTask task = new WordsAsyncTask();
         task.setWordsTaskListener(presenter);
         task.execute(MainPresenter.API_URL);
     }

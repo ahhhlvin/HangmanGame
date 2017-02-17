@@ -20,9 +20,9 @@ import okhttp3.Response;
  * display a progress bar, and disable the submit & new word buttons and text field until network
  * call has completed.
  */
-class WordsTask extends AsyncTask<String, Void, String> {
+class WordsAsyncTask extends AsyncTask<String, Void, String> {
 
-    WordsTaskListener mListener;
+    WordsAsyncTaskListener mListener;
 
     @Override
     protected String doInBackground(String... strings) {
@@ -77,7 +77,7 @@ class WordsTask extends AsyncTask<String, Void, String> {
         mListener = presenter;
     }
 
-    interface WordsTaskListener {
+    interface WordsAsyncTaskListener {
         void loadWords(List<String> gameWords);
 
         void downloadTaskCompleted();
