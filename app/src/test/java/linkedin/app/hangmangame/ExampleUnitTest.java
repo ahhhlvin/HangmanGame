@@ -1,4 +1,4 @@
-package ahhhlvin.c4q.nyc.hangmangame;
+package linkedin.app.hangmangame;
 
 import org.junit.Test;
 

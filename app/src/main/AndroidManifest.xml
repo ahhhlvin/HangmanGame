@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="ahhhlvin.c4q.nyc.hangmangame">
+    package="linkedin.app.hangmangame">
 
     <uses-permission android:name="android.permission.INTERNET"/>
 

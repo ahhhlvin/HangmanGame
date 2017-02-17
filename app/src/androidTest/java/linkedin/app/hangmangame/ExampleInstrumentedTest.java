@@ -1,4 +1,4 @@
-package ahhhlvin.c4q.nyc.hangmangame;
+package linkedin.app.hangmangame;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("ahhhlvin.c4q.nyc.hangmangame", appContext.getPackageName());
+        assertEquals("linkedin.app.hangmangame", appContext.getPackageName());
     }
 }

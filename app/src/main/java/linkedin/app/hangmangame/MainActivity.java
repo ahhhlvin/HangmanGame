@@ -1,8 +1,9 @@
-package ahhhlvin.c4q.nyc.hangmangame;
+package linkedin.app.hangmangame;
 
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -35,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
     Random randomGenerator;
     int remainingGuesses = 6;
     String currWord;
-    char[] guess;
+    char[] guessWordArr;
     HashSet<String> wordSet;
     HashSet<String> correctGuessSet;
     String incorrectChars = "";
@@ -49,11 +50,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         setup();
-
         new WordsTask().execute();
-        System.out.println(gameWords.size());
     }
 
+    /**
+     * On a separate thread, will fetch the txt containing all possible hangman words,
+     * and display a progress bar and disable the submit button and text field until network
+     * call has completed.
+     */
     class WordsTask extends AsyncTask<Void, Void, String> {
 
         @Override
@@ -67,10 +71,14 @@ public class MainActivity extends AppCompatActivity {
             progressBar.setVisibility(View.GONE);
             guessEditText.setEnabled(true);
             submitButton.setEnabled(true);
+            newWordButton.setEnabled(true);
             newGame();
         }
     }
 
+    /**
+     * Initializes the variables as well as instantiating the views and any of their properties.
+     */
     public void setup() {
         randomGenerator = new Random();
         gameWords = new ArrayList<>();
@@ -93,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String guessSubmission = guessEditText.getText().toString();
                 if (!guessSubmission.isEmpty()) {
-                    checkSubmission(guessSubmission);
+                    checkSubmission(guessSubmission.toLowerCase());
                     guessEditText.setText("");
                 }
             }
@@ -102,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
         incorrectGuessesTextView = (TextView) findViewById(R.id.incorrectGuessesTV);
 
         newWordButton = (Button) findViewById(R.id.newWordButton);
+        newWordButton.setEnabled(false);
         newWordButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -110,75 +119,97 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Creates a new round by retrieving another word from the list of possible word
+     * choices and resets necessary values back to their initial values.
+     */
     public void newGame() {
         if (gameWords.size() > 0) {
             int wordIndex = randomGenerator.nextInt(gameWords.size());
             currWord = gameWords.get(wordIndex);
             remainingGuesses = 6;
             refreshTriesCount();
+            correctGuessSet.clear();
+            wordSet.clear();
 
-            // TODO DELETE: FOR TESTING !!
-            System.out.println("current word: " + currWord);
+            Log.i("GUESS WORD", currWord);
 
             for (int i = 0; i < currWord.length(); i++) {
                 wordSet.add(String.valueOf(currWord.charAt(i)));
             }
 
-            guess = new char[currWord.length()];
+            guessWordArr = new char[currWord.length()];
 
             for (int i = 0; i < currWord.length(); i++) {
-                guess[i] = '_';
+                guessWordArr[i] = '_';
             }
 
-            guessWordTextView.setText(Arrays.toString(guess).replaceAll("\\[|\\]", "").replaceAll(",", " "));
+            updateGuessWordTextView();
             incorrectChars = "";
-            incorrectGuessesTextView.setText(incorrectChars);
+            updateIncorrectGuessesTextView();
         }
     }
 
+    /**
+     * Includes the logic for checking whether the submitted character is one that
+     * exists within the unknown word or not.
+     *
+     * @param input the single letter character the user entered in the text field
+     */
     public void checkSubmission(String input) {
 
-        if (remainingGuesses > 0) {
-            if (!wordSet.contains(input)) {
-                incorrectChars += input + " ";
-                incorrectGuessesTextView.setText(incorrectChars);
-                remainingGuesses--;
-                refreshTriesCount();
+        // prevents submission checking if same incorrect character is guessed multiple times
+        if (!incorrectChars.contains(input)) {
+            if (remainingGuesses > 0) {
+                // case where current word does not contain guessed character, subtract try and add to incorrect guesses
+                if (!wordSet.contains(input)) {
+                    incorrectChars += input + " ";
+                    updateIncorrectGuessesTextView();
+                    remainingGuesses--;
+                    refreshTriesCount();
+                    // if there are no guesses remaining then the game has ended and the user has lost
+                    if (remainingGuesses == 0) {
+                        Toast.makeText(getApplicationContext(), "GAME OVER :(", Toast.LENGTH_SHORT).show();
+                        newGame();
+                    }
+                } else {
+                    // case where the guess word does contain the guessed character, replace the "_" with character
+                    for (int i = 0; i < currWord.length(); i++) {
+                        if (input.equals(String.valueOf(currWord.charAt(i)))) {
+                            guessWordArr[i] = currWord.charAt(i);
+                            correctGuessSet.add(String.valueOf(currWord.charAt(i)));
+                        }
+                    }
+                    updateGuessWordTextView();
+                }
+            }
 
-                if (remainingGuesses == 0) {
-                    Toast.makeText(getApplicationContext(), "GAME OVER :(", Toast.LENGTH_SHORT).show();
+            // correctGuessSet is used to determine that all "_" have been properly guessed
+            if (!correctGuessSet.contains("_")) {
+                String result = "";
+
+                for (Character c : guessWordArr) {
+                    result += c;
+                }
+
+                if (result.equals(currWord)) {
+                    Toast.makeText(getApplicationContext(), "YOU WON! :)", Toast.LENGTH_SHORT).show();
                     newGame();
                 }
-
-            } else {
-
-                for (int i = 0; i < currWord.length(); i++) {
-                    if (input.equals(String.valueOf(currWord.charAt(i)))) {
-                        guess[i] = currWord.charAt(i);
-                        correctGuessSet.add(String.valueOf(currWord.charAt(i)));
-                    }
-                }
-
-                guessWordTextView.setText(Arrays.toString(guess).replaceAll("\\[|\\]", "").replaceAll(",", " "));
-            }
-        }
-
-
-        if (!correctGuessSet.contains("_")) {
-            String result = "";
-
-            for (Character c : guess) {
-                result += c;
-            }
-
-            if (result.equals(currWord)) {
-                Toast.makeText(getApplicationContext(), "YOU WON! :)", Toast.LENGTH_SHORT).show();
-                newGame();
             }
         }
 
     }
 
+    /**
+     * Makes the call to the API to retrieve the list of possible word choices and neatly returns
+     * them all in a List of strings.
+     *
+     * @param url the string URL representing the word dictionary API that the network call will
+     *            be made to
+     * @return String represents the "SUCCESS" string that will be used to determine whether network
+     * call was successful or not
+     */
     public String fetchWords(String url) {
         try {
 
@@ -194,7 +225,6 @@ public class MainActivity extends AppCompatActivity {
             String jsonData = responses.body().string();
 
             String[] words = jsonData.split("\\r?\\n");
-            System.out.println(words.length);
             gameWords = Arrays.asList(words);
 
             responses.body().close();
@@ -207,8 +237,25 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Formats and updates the number of guesses remaining the user has within the current round
+     */
     public void refreshTriesCount() {
         String remainingGuessText = String.format(Locale.US, "%1$s %2$d", getString(R.string.guess_remaining_text), remainingGuesses);
         triesCounterTextView.setText(remainingGuessText);
+    }
+
+    /**
+     * Formats the displaying guess word with a "_" representing every character of that word
+     */
+    public void updateGuessWordTextView() {
+        guessWordTextView.setText(Arrays.toString(guessWordArr).replaceAll("\\[|\\]", "").replaceAll(",", " "));
+    }
+
+    /**
+     * Refreshes with the latest incorrectly guessed characters
+     */
+    public void updateIncorrectGuessesTextView() {
+        incorrectGuessesTextView.setText(incorrectChars);
     }
 }
