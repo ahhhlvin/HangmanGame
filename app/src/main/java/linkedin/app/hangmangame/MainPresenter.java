@@ -3,6 +3,7 @@ package linkedin.app.hangmangame;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.ArrayAdapter;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -34,21 +35,27 @@ class MainPresenter {
     private String incorrectChars = "";
     private List<String> gameWords;
 
-    private static final String API_URL = "http://linkedin-reach.hagbpyjegb.us-west-2.elasticbeanstalk.com/words";
+    static final String API_URL = "http://linkedin-reach.hagbpyjegb.us-west-2.elasticbeanstalk.com/words";
 
+    /**
+     * Assigns the 'context' and 'view' property of the MainPresenter object
+     * @param view MainPresenter.UI the class that implements the "UI" interface to communicate with business logic
+     * @param context Context used to access string values in the resources folder
+     */
     void setView(MainPresenter.UI view, Context context) {
         this.view = view;
         this.context = context;
     }
 
+    /**
+     * Initializes properties of the MainPresenter object
+     */
     void setup() {
         randomGenerator = new Random();
         gameWords = new ArrayList<>();
-
         wordSet = new HashSet<>();
         correctGuessSet = new HashSet<>();
     }
-
 
     /**
      * Creates a new round by retrieving another word from the list of possible word
@@ -92,7 +99,8 @@ class MainPresenter {
         // prevents submission checking if same incorrect character is guessed multiple times
         if (!incorrectChars.contains(input)) {
             if (remainingGuesses > 0) {
-                // case where current word does not contain guessed character, subtract try and add to incorrect guesses
+                // case where current word does not contain guessed character, subtract from
+                // remaining guesses and add to incorrectly guessed characters list
                 if (!wordSet.contains(input)) {
                     incorrectChars += input + " ";
                     view.updateIncorrectGuessesTextView(incorrectChars);
@@ -104,7 +112,7 @@ class MainPresenter {
                         newGame();
                     }
                 } else {
-                    // case where the guess word does contain the guessed character, replace the "_" with character
+                    // case where the current word does contain the guessed character, replace the "_" with character
                     for (int i = 0; i < currWord.length(); i++) {
                         if (input.equals(String.valueOf(currWord.charAt(i)))) {
                             guessWordArr[i] = currWord.charAt(i);
@@ -115,7 +123,8 @@ class MainPresenter {
                 }
             }
 
-            // correctGuessSet is used to determine that all "_" have been properly guessed
+            // correctGuessSet is used to determine that all "_" have been accurately guessed
+            // and determine if the user has won by guessing all the right letters
             if (!correctGuessSet.contains("_")) {
                 String result = "";
 
@@ -133,6 +142,31 @@ class MainPresenter {
     }
 
     /**
+     * Responsible for spinner logic in selecting difficulty of guess words pulled from API
+     */
+    void spinnerClickSetup(ArrayList<String> difficultyLevels) {
+        difficultyLevels.add("Random");
+        for (int i = 1; i <= 10; i++) {
+            if (i == 1) {
+                difficultyLevels.add(i + " (easy)");
+            } else if (i == 10) {
+                difficultyLevels.add(i + " (hard)");
+            } else {
+                difficultyLevels.add(String.valueOf(i));
+            }
+        }
+    }
+
+    void changeLevelDifficulty(int positionLevel) {
+        if (positionLevel == 0) {
+            new WordsTask().execute(API_URL);
+        } else {
+            new WordsTask().execute(API_URL + "?difficulty=" + positionLevel);
+        }
+        view.setGameReadyUI();
+    }
+
+    /**
      * Makes the call to the API to retrieve the list of possible word choices and neatly returns
      * them all in a List of strings.
      *
@@ -141,11 +175,16 @@ class MainPresenter {
      * @return String represents the "SUCCESS" string that will be used to determine whether network
      * call was successful or not
      */
-    String fetchWords(String url) {
+    String fetchWords(String[] url) {
         try {
+            String urlString = "";
+            for (String s : url) {
+                urlString += s;
+            }
+
             OkHttpClient client = new OkHttpClient();
             Request request = new Request.Builder()
-                    .url(url)
+                    .url(urlString)
                     .build();
             Response responses;
 
@@ -187,19 +226,19 @@ class MainPresenter {
      * Creates a new AsyncTask to retrieve the guess words from network call to API
      */
     void runWordsTask() {
-        new WordsTask().execute();
+        new WordsTask().execute(API_URL);
     }
 
     /**
-     * On a separate thread, will fetch the txt containing all possible hangman words,
-     * and display a progress bar and disable the submit button and text field until network
+     * On a separate thread, will fetch the text containing all possible hangman words,
+     * display a progress bar, and disable the submit & new word buttons and text field until network
      * call has completed.
      */
-    private class WordsTask extends AsyncTask<Void, Void, String> {
+    private class WordsTask extends AsyncTask<String, Void, String> {
 
         @Override
-        protected String doInBackground(Void... voids) {
-            return fetchWords(API_URL);
+        protected String doInBackground(String... strings) {
+            return fetchWords(strings);
         }
 
         @Override
@@ -216,7 +255,7 @@ class MainPresenter {
     }
 
     /**
-     * Interface used to communicate between the Presenter and View to update UI
+     * Interface used to communicate between the Presenter and View to update UI components
      */
     interface UI {
         void refreshTriesCount(String triesFormattedInput);

@@ -2,15 +2,21 @@ package linkedin.app.hangmangame;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.AppCompatSpinner;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity implements MainPresenter.UI {
 
+    private AppCompatSpinner difficultySpinner;
     private TextView triesCounterTextView;
     private TextView guessWordTextView;
     private EditText guessEditText;
@@ -37,6 +43,8 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.UI 
      */
     public void setupViews() {
         presenter.setup();
+        difficultySpinner = (AppCompatSpinner) findViewById(R.id.difficultySpinner);
+        spinnerSetup();
         triesCounterTextView = (TextView) findViewById(R.id.triesCounterTV);
         guessWordTextView = (TextView) findViewById(R.id.guessWordTV);
         guessEditText = (EditText) findViewById(R.id.guessET);
@@ -69,6 +77,26 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.UI 
         });
     }
 
+    /**
+     * Setup of Adapter for spinner options
+     */
+    public void spinnerSetup() {
+        final ArrayList<String> difficultyLevels = new ArrayList<>();
+        final ArrayAdapter<String> arrAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, difficultyLevels);
+        presenter.spinnerClickSetup(difficultyLevels);
+        difficultySpinner.setAdapter(arrAdapter);
+        difficultySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                progressBar.setVisibility(View.VISIBLE);
+                presenter.changeLevelDifficulty(adapterView.getSelectedItemPosition());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+            }
+        });
+    }
 
     /**
      * Updates the number of guesses remaining the user has within the current round
@@ -97,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.UI 
      */
     @Override
     public void setGameReadyUI() {
-        progressBar.setVisibility(View.GONE);
+        progressBar.setVisibility(View.INVISIBLE);
         guessEditText.setEnabled(true);
         submitButton.setEnabled(true);
         newWordButton.setEnabled(true);
