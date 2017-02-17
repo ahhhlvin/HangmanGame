@@ -24,16 +24,12 @@ import okhttp3.Response;
 class MainPresenter {
 
     private MainPresenter.UI view;
-    private Context context;
-
-    private Random randomGenerator;
-    private int remainingGuesses = 6;
+    private HangmanModel hangmanModel;
     private String currWord;
     private char[] guessWordArr;
-    private HashSet<String> wordSet;
-    private HashSet<String> correctGuessSet;
-    private String incorrectChars = "";
-    private List<String> gameWords;
+    private String incorrectChars;
+    private int remainingGuesses;
+    private Context context;
 
     static final String API_URL = "http://linkedin-reach.hagbpyjegb.us-west-2.elasticbeanstalk.com/words";
 
@@ -51,10 +47,7 @@ class MainPresenter {
      * Initializes properties of the MainPresenter object
      */
     void setup() {
-        randomGenerator = new Random();
-        gameWords = new ArrayList<>();
-        wordSet = new HashSet<>();
-        correctGuessSet = new HashSet<>();
+        hangmanModel = new HangmanModel();
     }
 
     /**
@@ -62,28 +55,35 @@ class MainPresenter {
      * choices and resets necessary values back to their initial values.
      */
     void newGame() {
-        if (gameWords.size() > 0) {
-            int wordIndex = randomGenerator.nextInt(gameWords.size());
-            currWord = gameWords.get(wordIndex);
-            remainingGuesses = 6;
+        List<String> gameWords = hangmanModel.getGameWords();
+        currWord = hangmanModel.getCurrWord();
+        guessWordArr = hangmanModel.getGuessWordArr();
+        remainingGuesses = hangmanModel.getRemainingGuesses();
+        incorrectChars = hangmanModel.getIncorrectChars();
+
+
+        if (hangmanModel.getGameWords().size() > 0) {
+            int wordIndex = hangmanModel.getRandomGenerator().nextInt(gameWords.size());
+            hangmanModel.setCurrWord(gameWords.get(wordIndex));
+            hangmanModel.resetGuessesCount();
             view.refreshTriesCount(formatTriesString(remainingGuesses));
-            correctGuessSet.clear();
-            wordSet.clear();
+            hangmanModel.clearCorrectGuessSet();
+            hangmanModel.clearWordSet();
 
             Log.i("GUESS WORD", currWord);
 
             for (int i = 0; i < currWord.length(); i++) {
-                wordSet.add(String.valueOf(currWord.charAt(i)));
+                hangmanModel.getWordSet().add(String.valueOf(currWord.charAt(i)));
             }
 
-            guessWordArr = new char[currWord.length()];
+            hangmanModel.setGuessWordArr(new char[currWord.length()]);
 
             for (int i = 0; i < currWord.length(); i++) {
                 guessWordArr[i] = '_';
             }
 
             view.updateGuessWordTextView(formatGuessWord(guessWordArr));
-            incorrectChars = "";
+            hangmanModel.setIncorrectChars("");
             view.updateIncorrectGuessesTextView(incorrectChars);
         }
     }
@@ -95,23 +95,25 @@ class MainPresenter {
      * @param input the single letter character the user entered in the text field
      */
     void checkSubmission(String input) {
+        HashSet<String> correctGuessSet = hangmanModel.getCorrectGuessSet();
 
         // prevents submission checking if same incorrect character is guessed multiple times
         if (!incorrectChars.contains(input)) {
             if (remainingGuesses > 0) {
                 // case where current word does not contain guessed character, subtract from
                 // remaining guesses and add to incorrectly guessed characters list
-                if (!wordSet.contains(input)) {
+                if (!hangmanModel.getWordSet().contains(input)) {
                     incorrectChars += input + " ";
                     view.updateIncorrectGuessesTextView(incorrectChars);
                     remainingGuesses--;
                     view.refreshTriesCount(formatTriesString(remainingGuesses));
                     // if there are no guesses remaining then the game has ended and the user has lost
-                    if (remainingGuesses == 0) {
+                    if (hangmanModel.getRemainingGuesses() == 0) {
                         view.displayLoseToast();
                         newGame();
                     }
                 } else {
+                    String currWord = hangmanModel.getCurrWord();
                     // case where the current word does contain the guessed character, replace the "_" with character
                     for (int i = 0; i < currWord.length(); i++) {
                         if (input.equals(String.valueOf(currWord.charAt(i)))) {
@@ -177,11 +179,7 @@ class MainPresenter {
      */
     String fetchWords(String[] url) {
         try {
-            String urlString = "";
-            for (String s : url) {
-                urlString += s;
-            }
-
+            String urlString = url[0];
             OkHttpClient client = new OkHttpClient();
             Request request = new Request.Builder()
                     .url(urlString)
@@ -192,7 +190,7 @@ class MainPresenter {
             String jsonData = responses.body().string();
 
             String[] words = jsonData.split("\\r?\\n");
-            gameWords = Arrays.asList(words);
+            hangmanModel.setGameWords(Arrays.asList(words));
 
             responses.body().close();
             return ("SUCCESS");
