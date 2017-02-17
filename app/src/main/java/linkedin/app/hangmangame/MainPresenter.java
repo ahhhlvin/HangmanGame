@@ -21,7 +21,7 @@ import okhttp3.Response;
  * Created by alvin2 on 2/17/17.
  */
 
-class MainPresenter {
+class MainPresenter implements WordsTask.WordsTaskListener {
 
     private MainPresenter.UI view;
     private HangmanModel hangmanModel;
@@ -160,44 +160,12 @@ class MainPresenter {
     }
 
     void changeLevelDifficulty(int positionLevel) {
+        WordsTask task = new WordsTask();
+        task.setWordsTaskListener(this);
         if (positionLevel == 0) {
-            new WordsTask().execute(API_URL);
+            task.execute(API_URL);
         } else {
-            new WordsTask().execute(API_URL + "?difficulty=" + positionLevel);
-        }
-        view.setGameReadyUI();
-    }
-
-    /**
-     * Makes the call to the API to retrieve the list of possible word choices and neatly returns
-     * them all in a List of strings.
-     *
-     * @param url the string URL representing the word dictionary API that the network call will
-     *            be made to
-     * @return String represents the "SUCCESS" string that will be used to determine whether network
-     * call was successful or not
-     */
-    String fetchWords(String[] url) {
-        try {
-            String urlString = url[0];
-            OkHttpClient client = new OkHttpClient();
-            Request request = new Request.Builder()
-                    .url(urlString)
-                    .build();
-            Response responses;
-
-            responses = client.newCall(request).execute();
-            String jsonData = responses.body().string();
-
-            String[] words = jsonData.split("\\r?\\n");
-            hangmanModel.setGameWords(Arrays.asList(words));
-
-            responses.body().close();
-            return ("SUCCESS");
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            return ("EXCEPTION CAUGHT");
+            task.execute(API_URL + "?difficulty=" + positionLevel);
         }
     }
 
@@ -220,36 +188,15 @@ class MainPresenter {
         return Arrays.toString(correctGuesses).replaceAll("\\[|\\]", "").replaceAll(",", " ");
     }
 
-    /**
-     * Creates a new AsyncTask to retrieve the guess words from network call to API
-     */
-    void runWordsTask() {
-        new WordsTask().execute(API_URL);
+    @Override
+    public void loadWords(List<String> gameWords) {
+        hangmanModel.setGameWords(gameWords);
     }
 
-    /**
-     * On a separate thread, will fetch the text containing all possible hangman words,
-     * display a progress bar, and disable the submit & new word buttons and text field until network
-     * call has completed.
-     */
-    private class WordsTask extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected String doInBackground(String... strings) {
-            return fetchWords(strings);
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-
-            if (s.equalsIgnoreCase("EXCEPTION CAUGHT")) {
-                Log.e("NETWORK CALL STATUS", "Incorrect URL");
-            } else {
-                newGame();
-                view.setGameReadyUI();
-            }
-        }
+    @Override
+    public void downloadTaskCompleted() {
+        newGame();
+        view.setGameReadyUI();
     }
 
     /**
