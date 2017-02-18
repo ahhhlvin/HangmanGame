@@ -150,13 +150,13 @@ class MainPresenter implements WordsAsyncTask.WordsAsyncTaskListener {
         }
     }
 
-    void changeLevelDifficulty(int positionLevel) {
+    void changeLevelDifficulty(int difficultyLevel) {
         WordsAsyncTask task = new WordsAsyncTask();
         task.setWordsTaskListener(this);
-        if (positionLevel == 0) {
+        if (difficultyLevel == 0) {
             task.execute(API_URL);
         } else {
-            task.execute(API_URL + "?difficulty=" + positionLevel);
+            task.execute(API_URL + "?difficulty=" + difficultyLevel);
         }
     }
 

@@ -6,6 +6,6 @@
     <string name="submit_button_text">SUBMIT</string>
     <string name="new_button_text">NEW WORD</string>
     <string name="edittext_example">e.g. \'a\'</string>
-    <string name="select_difficulty_text">Select word difficulty</string>
+    <string name="select_difficulty_text">Select word difficulty:</string>
 
 </resources>
