@@ -34,10 +34,10 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.UI 
 
         presenter = new MainPresenter();
         presenter.setView(this, getApplicationContext());
-        setupViews();
         WordsAsyncTask task = new WordsAsyncTask();
         task.setWordsTaskListener(presenter);
         task.execute(MainPresenter.API_URL);
+        setupViews();
     }
 
     /**

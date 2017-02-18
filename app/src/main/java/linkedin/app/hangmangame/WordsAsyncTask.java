@@ -22,7 +22,7 @@ import okhttp3.Response;
  */
 class WordsAsyncTask extends AsyncTask<String, Void, String> {
 
-    WordsAsyncTaskListener mListener;
+    private WordsAsyncTaskListener mListener;
 
     @Override
     protected String doInBackground(String... strings) {
