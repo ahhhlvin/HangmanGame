@@ -108,27 +108,6 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.UI 
         });
     }
 
-    /**
-     * Updates the number of guesses remaining the user has within the current round
-     */
-    public void refreshTriesCount(String triesFormattedInput) {
-        triesCounterTextView.setText(triesFormattedInput);
-    }
-
-    /**
-     * Displays guess word with a "_" representing every character of that word and win/lose message
-     */
-    public void updateGuessWordTextView(String guessWord) {
-        guessWordTextView.setText(guessWord);
-    }
-
-    /**
-     * Refreshes with the latest incorrectly guessed characters
-     */
-    public void updateIncorrectGuessesTextView(String incorrectGuesses) {
-        incorrectGuessesTextView.setText(incorrectGuesses);
-    }
-
     // Callback methods /////////////////////////////////////////////////////////////////////////
 
     /**
@@ -175,5 +154,30 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.UI 
         guessEditText.setEnabled(true);
         submitButton.setEnabled(true);
         newWordButton.setEnabled(true);
+    }
+
+
+    /**
+     * Updates the number of guesses remaining the user has within the current round
+     */
+    @Override
+    public void refreshTriesCount(String triesFormattedInput) {
+        triesCounterTextView.setText(triesFormattedInput);
+    }
+
+    /**
+     * Displays guess word with a "_" representing every character of that word and win/lose message
+     */
+    @Override
+    public void updateGuessWordTextView(String guessWord) {
+        guessWordTextView.setText(guessWord);
+    }
+
+    /**
+     * Refreshes with the latest incorrectly guessed characters
+     */
+    @Override
+    public void updateIncorrectGuessesTextView(String incorrectGuesses) {
+        incorrectGuessesTextView.setText(incorrectGuesses);
     }
 }
