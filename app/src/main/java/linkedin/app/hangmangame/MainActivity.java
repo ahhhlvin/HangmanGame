@@ -1,20 +1,24 @@
 package linkedin.app.hangmangame;
 
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatSpinner;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements MainPresenter.UI {
 
+    private RelativeLayout mainLayout;
     private AppCompatSpinner difficultySpinner;
     private TextView triesCounterTextView;
     private TextView guessWordTextView;
@@ -45,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.UI 
      */
     public void setupViews() {
         presenter.setup();
+        mainLayout = (RelativeLayout) findViewById(R.id.activity_main);
         difficultySpinner = (AppCompatSpinner) findViewById(R.id.difficultySpinner);
         spinnerSetup();
         triesCounterTextView = (TextView) findViewById(R.id.triesCounterTV);
@@ -140,6 +145,14 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.UI 
         newWordButton.setEnabled(true);
     }
 
+    /**
+     * Programmatically hides keyboard to reveal 'new word' button to start new round
+     */
+    @Override
+    public void hideKeyboard() {
+        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(mainLayout.getWindowToken(), 0);
+    }
 
     /**
      * Updates the number of guesses remaining the user has within the current round

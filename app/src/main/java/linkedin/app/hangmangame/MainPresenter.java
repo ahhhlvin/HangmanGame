@@ -103,7 +103,7 @@ class MainPresenter implements WordsAsyncTask.WordsAsyncTaskListener {
                     view.refreshTriesCount(formatTriesString(remainingGuesses));
                     // if there are no guesses remaining then the game has ended and the user has lost
                     if (remainingGuesses == 0) {
-                        displayLoseMessage();
+                        displayWinLoseMessage(false);
                     }
                 } else if (input.length() == 1 && wordSet.contains(input)) {
                     // case where the current word does contain the guessed character, replace the "_" with character
@@ -118,7 +118,7 @@ class MainPresenter implements WordsAsyncTask.WordsAsyncTaskListener {
                 } else if (input.length() > 1 && currWord.equals(input)) {
                     // case where the current submitted guess word does match the actual game word
                     // and user has won
-                    displayWinMessage();
+                    displayWinLoseMessage(true);
                 }
             }
         }
@@ -161,7 +161,7 @@ class MainPresenter implements WordsAsyncTask.WordsAsyncTaskListener {
      * Uses correctGuessSet to determine if all "_" have been accurately guessed
      * and determines if the user has won
      */
-    void checkWordMatchesGuess() {
+    private void checkWordMatchesGuess() {
         if (!correctGuessSet.contains("_")) {
             String result = "";
 
@@ -170,7 +170,7 @@ class MainPresenter implements WordsAsyncTask.WordsAsyncTaskListener {
             }
 
             if (result.equals(currWord)) {
-                displayWinMessage();
+                displayWinLoseMessage(true);
             }
         }
     }
@@ -178,15 +178,13 @@ class MainPresenter implements WordsAsyncTask.WordsAsyncTaskListener {
     /**
      * Displays a message to notify that the user has lost the current round
      */
-    private void displayLoseMessage() {
-        view.updateGuessWordTextView("G A M E   O V E R ! :(");
-    }
-
-    /**
-     * Displays a message to notify that the user has won the current round
-     */
-    private void displayWinMessage() {
-        view.updateGuessWordTextView("Y O U   W O N ! :)");
+    private void displayWinLoseMessage(boolean userDidWin) {
+        if (userDidWin) {
+            view.updateGuessWordTextView("Y O U   W O N ! :)");
+        } else {
+            view.updateGuessWordTextView("G A M E   O V E R ! :(");
+        }
+        view.hideKeyboard();
     }
 
     /**
@@ -239,5 +237,7 @@ class MainPresenter implements WordsAsyncTask.WordsAsyncTaskListener {
         void updateIncorrectGuessesTextView(String incorrectGuesses);
 
         void setGameReadyUI();
+
+        void hideKeyboard();
     }
 }
