@@ -10,7 +10,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -27,6 +26,8 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.UI 
 
     private MainPresenter presenter;
 
+    WordsAsyncTask task;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,9 +35,17 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.UI 
 
         presenter = new MainPresenter();
         presenter.setView(this, getApplicationContext());
-        WordsAsyncTask task = new WordsAsyncTask();
-        task.setWordsTaskListener(presenter);
+        if (savedInstanceState != null) {
+            guessWordTextView.setText(savedInstanceState.getString(MainPresenter.CURRENT_WORD_KEY));
+            triesCounterTextView.setText(savedInstanceState.getString(MainPresenter.REMAINING_GUESSES_KEY));
+            incorrectGuessesTextView.setText(savedInstanceState.getString(MainPresenter.INCORRECT_GUESSES_KEY));
+            presenter.restoreWordSet(savedInstanceState);
+            presenter.restoreCorrectGuessedSet(savedInstanceState);
+        } else {
         setupViews();
+        task = new WordsAsyncTask();
+        task.setWordsTaskListener(presenter);
+        }
     }
 
     /**
@@ -107,7 +116,7 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.UI 
     }
 
     /**
-     * Displays guess word with a "_" representing every character of that word
+     * Displays guess word with a "_" representing every character of that word and win/lose message
      */
     public void updateGuessWordTextView(String guessWord) {
         guessWordTextView.setText(guessWord);
@@ -120,6 +129,42 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.UI 
         incorrectGuessesTextView.setText(incorrectGuesses);
     }
 
+    // Callback methods /////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Cancels AsyncTask if currently running and back button is pressed to prevent memory leak
+     */
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        if (task != null && !task.isCancelled()) {
+            task.cancel(true);
+        }
+    }
+
+    /**
+     * Cancels AsyncTask if currently running to prevent memory leak
+     */
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        if (this.isFinishing() && task != null && !task.isCancelled()) {
+            task.cancel(true);
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        presenter.saveScreenRotateState(outState);
+    }
+
+
+
+    // MainPresenter interface method implementations ////////////////////////////////////////////
+
     /**
      * Enables the text field and buttons after network call to API is completed, and disables
      * progress bar
@@ -130,21 +175,5 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.UI 
         guessEditText.setEnabled(true);
         submitButton.setEnabled(true);
         newWordButton.setEnabled(true);
-    }
-
-    /**
-     * Displays a toast message that notifies the user the game has ended
-     */
-    @Override
-    public void displayLoseToast() {
-        Toast.makeText(getApplicationContext(), "GAME OVER :(", Toast.LENGTH_SHORT).show();
-    }
-
-    /**
-     * Displays a toast message that notifies the user the game has been won
-     */
-    @Override
-    public void displayWinToast() {
-        Toast.makeText(getApplicationContext(), "YOU WON! :)", Toast.LENGTH_SHORT).show();
     }
 }

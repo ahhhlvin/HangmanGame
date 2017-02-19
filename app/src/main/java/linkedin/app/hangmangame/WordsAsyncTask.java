@@ -26,6 +26,9 @@ class WordsAsyncTask extends AsyncTask<String, Void, String> {
 
     @Override
     protected String doInBackground(String... strings) {
+        if (isCancelled()) {
+            return "CANCELLED";
+        }
         return fetchWords(strings);
     }
 
@@ -35,6 +38,8 @@ class WordsAsyncTask extends AsyncTask<String, Void, String> {
 
         if (s.equalsIgnoreCase("EXCEPTION CAUGHT")) {
             Log.e("NETWORK CALL STATUS", "Incorrect URL");
+        } else if (s.equalsIgnoreCase("CANCELLED")) {
+            Log.e("NETWORK CALL STATUS", "Interrupted or cancelled");
         } else {
             mListener.downloadTaskCompleted();
         }
@@ -49,7 +54,7 @@ class WordsAsyncTask extends AsyncTask<String, Void, String> {
      * @return String represents the "SUCCESS" string that will be used to determine whether network
      * call was successful or not
      */
-    private String fetchWords(String[] url) {
+    String fetchWords(String[] url) {
         try {
             String urlString = url[0];
             OkHttpClient client = new OkHttpClient();
@@ -73,10 +78,17 @@ class WordsAsyncTask extends AsyncTask<String, Void, String> {
         }
     }
 
+    /**
+     * Assigns the presenter to be a listener of the WordsTask class for notification of completion
+     * @param presenter MainPresenter object representing the presenter class
+     */
     void setWordsTaskListener(MainPresenter presenter) {
         mListener = presenter;
     }
 
+    /**
+     * Interface methods for communicating between the MainPresenter and WordsTask to begin game
+     */
     interface WordsAsyncTaskListener {
         void loadWords(List<String> gameWords);
 

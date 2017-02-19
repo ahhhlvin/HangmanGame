@@ -1,6 +1,7 @@
 package linkedin.app.hangmangame;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ class MainPresenter implements WordsAsyncTask.WordsAsyncTaskListener {
     private Context context;
 
     private Random randomGenerator;
-    private int remainingGuesses = 6;
+    int remainingGuesses = 6;
     private String currWord;
     private char[] guessWordArr;
     private HashSet<String> wordSet;
@@ -29,6 +30,11 @@ class MainPresenter implements WordsAsyncTask.WordsAsyncTaskListener {
     private List<String> gameWords;
 
     static final String API_URL = "http://linkedin-reach.hagbpyjegb.us-west-2.elasticbeanstalk.com/words";
+    private static final String CORRECT_GUESS_SET_KEY = "correctGuessSetKey";
+    private static final String WORDSET_KEY = "wordsetKey";
+    static final String CURRENT_WORD_KEY = "currentWordKey";
+    static final String REMAINING_GUESSES_KEY = "remainingGuessesKey";
+    static final String INCORRECT_GUESSES_KEY = "incorrectGuessesKey";
 
     /**
      * Assigns the 'context' and 'view' property of the MainPresenter object
@@ -101,8 +107,7 @@ class MainPresenter implements WordsAsyncTask.WordsAsyncTaskListener {
                     view.refreshTriesCount(formatTriesString(remainingGuesses));
                     // if there are no guesses remaining then the game has ended and the user has lost
                     if (remainingGuesses == 0) {
-                        view.displayLoseToast();
-                        newGame();
+                        displayLoseMessage();
                     }
                 } else {
                     // case where the current word does contain the guessed character, replace the "_" with character
@@ -126,8 +131,7 @@ class MainPresenter implements WordsAsyncTask.WordsAsyncTaskListener {
                 }
 
                 if (result.equals(currWord)) {
-                    view.displayWinToast();
-                    newGame();
+                    displayWinMessage();
                 }
             }
         }
@@ -138,7 +142,7 @@ class MainPresenter implements WordsAsyncTask.WordsAsyncTaskListener {
      * Responsible for spinner logic in selecting difficulty of guess words pulled from API
      */
     void spinnerClickSetup(ArrayList<String> difficultyLevels) {
-        difficultyLevels.add("Random");
+        difficultyLevels.add("Random difficulty");
         for (int i = 1; i <= 10; i++) {
             if (i == 1) {
                 difficultyLevels.add(i + " (easy)");
@@ -150,6 +154,12 @@ class MainPresenter implements WordsAsyncTask.WordsAsyncTaskListener {
         }
     }
 
+    /**
+     * Refreshes game words list with appropriate difficulty level words by changing the API
+     * parameter that is fetched and making a new network call
+     * @param difficultyLevel int represents the difficulty level that the user selected from the
+     *                        spinner
+     */
     void changeLevelDifficulty(int difficultyLevel) {
         WordsAsyncTask task = new WordsAsyncTask();
         task.setWordsTaskListener(this);
@@ -158,6 +168,38 @@ class MainPresenter implements WordsAsyncTask.WordsAsyncTaskListener {
         } else {
             task.execute(API_URL + "?difficulty=" + difficultyLevel);
         }
+    }
+
+    /**
+     * Displays a message to notify that the user has lost the current round
+     */
+    private void displayLoseMessage() {
+        view.updateGuessWordTextView("G A M E   O V E R ! :(");
+    }
+
+    /**
+     * Displays a message to notify that the user has won the current round
+     */
+    private void displayWinMessage() {
+        view.updateGuessWordTextView("Y O U   W O N ! :)");
+    }
+
+    Bundle saveScreenRotateState(Bundle outstate) {
+        outstate.putString(CURRENT_WORD_KEY, currWord);
+        outstate.putString(REMAINING_GUESSES_KEY, formatTriesString(remainingGuesses));
+        outstate.putString(INCORRECT_GUESSES_KEY, incorrectChars);
+        outstate.putSerializable(WORDSET_KEY, wordSet);
+        outstate.putSerializable(CORRECT_GUESS_SET_KEY, correctGuessSet);
+
+        return outstate;
+    }
+
+    void restoreWordSet(Bundle bundle) {
+        wordSet = (HashSet<String>) bundle.getSerializable(WORDSET_KEY);
+    }
+
+    void restoreCorrectGuessedSet(Bundle bundle) {
+        correctGuessSet = (HashSet<String>) bundle.getSerializable(CORRECT_GUESS_SET_KEY);
     }
 
     /**
@@ -179,11 +221,20 @@ class MainPresenter implements WordsAsyncTask.WordsAsyncTaskListener {
         return Arrays.toString(correctGuesses).replaceAll("\\[|\\]", "").replaceAll(",", " ");
     }
 
+    /**
+     * Interface method that assigns all downloaded game words to the property of the MainPresenter
+     * object, communicates between WordsTask and MainPresenter by notifying when task has completed
+     * @param gameWords List<String> an ArrayList of type String words representing guess words
+     */
     @Override
     public void loadWords(List<String> gameWords) {
         this.gameWords = gameWords;
     }
 
+    /**
+     * Interface method that notifies MainPresenter that the WordsTask has completed on the background
+     * thread and is ready to start a new game
+     */
     @Override
     public void downloadTaskCompleted() {
         newGame();
@@ -201,9 +252,5 @@ class MainPresenter implements WordsAsyncTask.WordsAsyncTaskListener {
         void updateIncorrectGuessesTextView(String incorrectGuesses);
 
         void setGameReadyUI();
-
-        void displayLoseToast();
-
-        void displayWinToast();
     }
 }
