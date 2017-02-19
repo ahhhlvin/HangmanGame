@@ -26,7 +26,7 @@ class MainPresenter implements WordsAsyncTask.WordsAsyncTaskListener {
     private char[] guessWordArr;
     private HashSet<String> wordSet;
     private HashSet<String> correctGuessSet;
-    private String incorrectChars = "";
+    private ArrayList<String> incorrectChars;
     private List<String> gameWords;
 
     static final String API_URL = "http://linkedin-reach.hagbpyjegb.us-west-2.elasticbeanstalk.com/words";
@@ -49,6 +49,7 @@ class MainPresenter implements WordsAsyncTask.WordsAsyncTaskListener {
         gameWords = new ArrayList<>();
         wordSet = new HashSet<>();
         correctGuessSet = new HashSet<>();
+        incorrectChars = new ArrayList<>();
     }
 
     /**
@@ -77,34 +78,34 @@ class MainPresenter implements WordsAsyncTask.WordsAsyncTaskListener {
             }
 
             view.updateGuessWordTextView(formatGuessWord(guessWordArr));
-            incorrectChars = "";
-            view.updateIncorrectGuessesTextView(incorrectChars);
+            incorrectChars.clear();
+            view.updateIncorrectGuessesTextView(incorrectChars.toString());
         }
     }
 
     /**
-     * Includes the logic for checking whether the submitted character is one that
-     * exists within the unknown word or not.
+     * Includes the logic for checking whether the submitted character guess is one that
+     * exists within the game word or submitted word guess matches game word.
      *
-     * @param input the single letter character the user entered in the text field
+     * @param input the single letter character or full word the user submitted in the text field
      */
     void checkSubmission(String input) {
 
-        // prevents submission checking if same incorrect character is guessed multiple times
+        // prevents submission checking if same incorrect guess is submitted multiple times
         if (!incorrectChars.contains(input)) {
             if (remainingGuesses > 0) {
-                // case where current word does not contain guessed character, subtract from
-                // remaining guesses and add to incorrectly guessed characters list
-                if (!wordSet.contains(input)) {
-                    incorrectChars += input + " ";
-                    view.updateIncorrectGuessesTextView(incorrectChars);
+                // case where current word does not contain guessed character or matches guessed
+                // word, subtract from remaining guesses and add to incorrectly guessed characters list
+                if (input.length() == 1 && !wordSet.contains(input) || input.length() > 1 && !currWord.equals(input)) {
+                    incorrectChars.add(input);
+                    view.updateIncorrectGuessesTextView(incorrectChars.toString());
                     remainingGuesses--;
                     view.refreshTriesCount(formatTriesString(remainingGuesses));
                     // if there are no guesses remaining then the game has ended and the user has lost
                     if (remainingGuesses == 0) {
                         displayLoseMessage();
                     }
-                } else {
+                } else if (input.length() == 1 && wordSet.contains(input)) {
                     // case where the current word does contain the guessed character, replace the "_" with character
                     for (int i = 0; i < currWord.length(); i++) {
                         if (input.equals(String.valueOf(currWord.charAt(i)))) {
@@ -113,19 +114,10 @@ class MainPresenter implements WordsAsyncTask.WordsAsyncTaskListener {
                         }
                     }
                     view.updateGuessWordTextView(formatGuessWord(guessWordArr));
-                }
-            }
-
-            // correctGuessSet is used to determine that all "_" have been accurately guessed
-            // and determine if the user has won by guessing all the right letters
-            if (!correctGuessSet.contains("_")) {
-                String result = "";
-
-                for (Character c : guessWordArr) {
-                    result += c;
-                }
-
-                if (result.equals(currWord)) {
+                    checkWordMatchesGuess();
+                } else if (input.length() > 1 && currWord.equals(input)) {
+                    // case where the current submitted guess word does match the actual game word
+                    // and user has won
                     displayWinMessage();
                 }
             }
@@ -162,6 +154,24 @@ class MainPresenter implements WordsAsyncTask.WordsAsyncTaskListener {
             task.execute(API_URL);
         } else {
             task.execute(API_URL + "?difficulty=" + difficultyLevel);
+        }
+    }
+
+    /**
+     * Uses correctGuessSet to determine if all "_" have been accurately guessed
+     * and determines if the user has won
+     */
+    void checkWordMatchesGuess() {
+        if (!correctGuessSet.contains("_")) {
+            String result = "";
+
+            for (Character c : guessWordArr) {
+                result += c;
+            }
+
+            if (result.equals(currWord)) {
+                displayWinMessage();
+            }
         }
     }
 
