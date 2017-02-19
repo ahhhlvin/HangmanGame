@@ -30,11 +30,6 @@ class MainPresenter implements WordsAsyncTask.WordsAsyncTaskListener {
     private List<String> gameWords;
 
     static final String API_URL = "http://linkedin-reach.hagbpyjegb.us-west-2.elasticbeanstalk.com/words";
-    private static final String CORRECT_GUESS_SET_KEY = "correctGuessSetKey";
-    private static final String WORDSET_KEY = "wordsetKey";
-    static final String CURRENT_WORD_KEY = "currentWordKey";
-    static final String REMAINING_GUESSES_KEY = "remainingGuessesKey";
-    static final String INCORRECT_GUESSES_KEY = "incorrectGuessesKey";
 
     /**
      * Assigns the 'context' and 'view' property of the MainPresenter object
@@ -182,24 +177,6 @@ class MainPresenter implements WordsAsyncTask.WordsAsyncTaskListener {
      */
     private void displayWinMessage() {
         view.updateGuessWordTextView("Y O U   W O N ! :)");
-    }
-
-    Bundle saveScreenRotateState(Bundle outstate) {
-        outstate.putString(CURRENT_WORD_KEY, currWord);
-        outstate.putString(REMAINING_GUESSES_KEY, formatTriesString(remainingGuesses));
-        outstate.putString(INCORRECT_GUESSES_KEY, incorrectChars);
-        outstate.putSerializable(WORDSET_KEY, wordSet);
-        outstate.putSerializable(CORRECT_GUESS_SET_KEY, correctGuessSet);
-
-        return outstate;
-    }
-
-    void restoreWordSet(Bundle bundle) {
-        wordSet = (HashSet<String>) bundle.getSerializable(WORDSET_KEY);
-    }
-
-    void restoreCorrectGuessedSet(Bundle bundle) {
-        correctGuessSet = (HashSet<String>) bundle.getSerializable(CORRECT_GUESS_SET_KEY);
     }
 
     /**
