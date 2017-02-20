@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.support.design.widget.Snackbar;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -32,6 +33,13 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.UI 
     private Button submitButton;
     private TextView incorrectGuessesTextView;
     private android.support.design.widget.FloatingActionButton newWordButton;
+
+    private ImageView headImage;
+    private ImageView leftArmImage;
+    private ImageView bodyImage;
+    private ImageView rightArmImage;
+    private ImageView leftLegImage;
+    private ImageView rightLegImage;
 
     private MainPresenter presenter;
 
@@ -96,11 +104,24 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.UI 
                     guessEditText.setVisibility(View.VISIBLE);
                     submitButton.setEnabled(true);
                 }
+                headImage.setVisibility(View.VISIBLE);
+                leftArmImage.setVisibility(View.VISIBLE);
+                bodyImage.setVisibility(View.VISIBLE);
+                rightArmImage.setVisibility(View.VISIBLE);
+                leftLegImage.setVisibility(View.VISIBLE);
+                rightLegImage.setVisibility(View.VISIBLE);
                 Snackbar
                         .make(coordinatorLayoutView, R.string.new_word_snackmsg, Snackbar.LENGTH_LONG)
                         .show();
             }
         });
+
+        headImage = (ImageView) findViewById(R.id.head);
+        leftArmImage = (ImageView) findViewById(R.id.leftArm);
+        bodyImage = (ImageView) findViewById(R.id.body);
+        rightArmImage = (ImageView) findViewById(R.id.rightArm);
+        leftLegImage = (ImageView) findViewById(R.id.leftLeg);
+        rightLegImage = (ImageView) findViewById(R.id.rightLeg);
     }
 
     /**
@@ -213,5 +234,35 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.UI 
     @Override
     public void updateIncorrectGuessesTextView(String incorrectGuesses) {
         incorrectGuessesTextView.setText(incorrectGuesses);
+    }
+
+    @Override
+    public void hideHead() {
+        headImage.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void hideLeftArm() {
+        leftArmImage.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void hideBody() {
+        bodyImage.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void hideRightArm() {
+        rightArmImage.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void hideLeftLeg() {
+        leftLegImage.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void hideRightLeg() {
+        rightLegImage.setVisibility(View.INVISIBLE);
     }
 }

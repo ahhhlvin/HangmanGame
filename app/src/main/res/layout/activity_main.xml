@@ -7,12 +7,6 @@
     android:layout_height="match_parent"
     tools:context="linkedin.app.hangmangame.MainActivity">
 
-    <android.support.design.widget.CoordinatorLayout
-        android:id="@+id/snackbarPosition"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentBottom="true" />
-
     <LinearLayout
         android:id="@+id/mainLinearLayout"
         android:layout_width="match_parent"
@@ -93,6 +87,59 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
+        <ImageView
+            android:id="@+id/head"
+            android:src="@drawable/head"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal">
+
+            <ImageView
+                android:id="@+id/leftArm"
+                android:src="@drawable/left_arm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <ImageView
+                android:id="@+id/body"
+                android:src="@drawable/body"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <ImageView
+                android:id="@+id/rightArm"
+                android:src="@drawable/right_arm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal">
+
+            <ImageView
+                android:id="@+id/leftLeg"
+                android:src="@drawable/left_leg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <ImageView
+                android:id="@+id/rightLeg"
+                android:src="@drawable/right_leg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
     </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton
@@ -108,6 +155,12 @@
         android:src="@drawable/refresh"
         android:text="@string/new_button_text"
         app:backgroundTint="@android:color/holo_blue_light" />
+
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/snackbarPosition"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true" />
 
     <ProgressBar
         android:id="@+id/progressBar"

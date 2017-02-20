@@ -100,6 +100,7 @@ class MainPresenter implements WordsAsyncTask.WordsAsyncTaskListener {
                     incorrectChars.add(input);
                     view.updateIncorrectGuessesTextView(incorrectChars.toString());
                     remainingGuesses--;
+                    updateHangmanImage(remainingGuesses);
                     view.refreshTriesCount(formatTriesString(remainingGuesses));
                     // if there are no guesses remaining then the game has ended and the user has lost
                     if (remainingGuesses == 0) {
@@ -123,6 +124,22 @@ class MainPresenter implements WordsAsyncTask.WordsAsyncTaskListener {
             }
         }
 
+    }
+    
+    void updateHangmanImage(int remainingGuesses) {
+        if (remainingGuesses == 5) {
+            view.hideHead();
+        } else if (remainingGuesses == 4) {
+            view.hideLeftArm();
+        } else if (remainingGuesses == 3) {
+            view.hideBody();
+        } else if (remainingGuesses == 2) {
+            view.hideRightArm();
+        } else if (remainingGuesses == 1) {
+            view.hideLeftLeg();
+        } else {
+            view.hideRightLeg();
+        }
     }
 
     /**
@@ -242,5 +259,17 @@ class MainPresenter implements WordsAsyncTask.WordsAsyncTaskListener {
         void setGameReadyUI();
 
         void hideKeyboard();
+
+        void hideHead();
+
+        void hideLeftArm();
+
+        void hideBody();
+
+        void hideRightArm();
+
+        void hideLeftLeg();
+
+        void hideRightLeg();
     }
 }
