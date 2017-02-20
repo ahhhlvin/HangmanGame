@@ -1,6 +1,8 @@
 package linkedin.app.hangmangame;
 
 import android.content.Context;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatSpinner;
@@ -9,7 +11,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
+import android.support.design.widget.Snackbar;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -19,14 +22,16 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity implements MainPresenter.UI {
 
     private RelativeLayout mainLayout;
+    private LinearLayout linearLayout;
+    private View coordinatorLayoutView;
     private AppCompatSpinner difficultySpinner;
     private TextView triesCounterTextView;
     private TextView guessWordTextView;
-    private EditText guessEditText;
+    private TextInputEditText guessEditText;
     private ProgressBar progressBar;
     private Button submitButton;
     private TextView incorrectGuessesTextView;
-    private Button newWordButton;
+    private android.support.design.widget.FloatingActionButton newWordButton;
 
     private MainPresenter presenter;
 
@@ -50,11 +55,13 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.UI 
     public void setupViews() {
         presenter.setup();
         mainLayout = (RelativeLayout) findViewById(R.id.activity_main);
+        linearLayout = (LinearLayout) findViewById(R.id.mainLinearLayout);
+        coordinatorLayoutView = (CoordinatorLayout) findViewById(R.id.snackbarPosition);
         difficultySpinner = (AppCompatSpinner) findViewById(R.id.difficultySpinner);
         spinnerSetup();
         triesCounterTextView = (TextView) findViewById(R.id.triesCounterTV);
         guessWordTextView = (TextView) findViewById(R.id.guessWordTV);
-        guessEditText = (EditText) findViewById(R.id.guessET);
+        guessEditText = (TextInputEditText) findViewById(R.id.guessET);
         guessEditText.setEnabled(false);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
@@ -67,6 +74,11 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.UI 
                 if (!guessSubmission.isEmpty()) {
                     presenter.checkSubmission(guessSubmission.toLowerCase());
                     guessEditText.setText("");
+                } else {
+                    hideKeyboard();
+                    Snackbar
+                            .make(coordinatorLayoutView, R.string.bad_submission_snackmsg, Snackbar.LENGTH_LONG)
+                            .show();
                 }
             }
         });
@@ -74,12 +86,19 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.UI 
         progressBar.setVisibility(View.VISIBLE);
         incorrectGuessesTextView = (TextView) findViewById(R.id.incorrectGuessesTV);
 
-        newWordButton = (Button) findViewById(R.id.newWordButton);
+        newWordButton = (android.support.design.widget.FloatingActionButton) findViewById(R.id.newWordButton);
         newWordButton.setEnabled(false);
         newWordButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 presenter.newGame();
+                if (guessEditText.getVisibility() == View.INVISIBLE && !submitButton.isEnabled()) {
+                    guessEditText.setVisibility(View.VISIBLE);
+                    submitButton.setEnabled(true);
+                }
+                Snackbar
+                        .make(coordinatorLayoutView, R.string.new_word_snackmsg, Snackbar.LENGTH_LONG)
+                        .show();
             }
         });
     }
@@ -96,6 +115,7 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.UI 
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 progressBar.setVisibility(View.VISIBLE);
+                linearLayout.setAlpha((float)0.3);
                 presenter.changeLevelDifficulty(adapterView.getSelectedItemPosition());
             }
 
@@ -140,6 +160,7 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.UI 
     @Override
     public void setGameReadyUI() {
         progressBar.setVisibility(View.INVISIBLE);
+        linearLayout.setAlpha(1);
         guessEditText.setEnabled(true);
         submitButton.setEnabled(true);
         newWordButton.setEnabled(true);
@@ -150,8 +171,9 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.UI 
      */
     @Override
     public void hideKeyboard() {
-        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(mainLayout.getWindowToken(), 0);
+
     }
 
     /**
@@ -168,6 +190,21 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.UI 
     @Override
     public void updateGuessWordTextView(String guessWord) {
         guessWordTextView.setText(guessWord);
+    }
+
+    @Override
+    public void displayWinLoseSnackbar(boolean userDidWin) {
+        guessEditText.setVisibility(View.INVISIBLE);
+        submitButton.setEnabled(false);
+        String message = "";
+        if (userDidWin) {
+            message = "Congratulations, you won!";
+        } else {
+            message = "Aww great attempt though, how about trying again?";
+        }
+        Snackbar
+                .make(coordinatorLayoutView, message, Snackbar.LENGTH_LONG)
+                .show();
     }
 
     /**

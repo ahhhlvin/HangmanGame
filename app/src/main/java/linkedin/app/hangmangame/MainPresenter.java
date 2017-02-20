@@ -180,11 +180,12 @@ class MainPresenter implements WordsAsyncTask.WordsAsyncTaskListener {
      */
     private void displayWinLoseMessage(boolean userDidWin) {
         if (userDidWin) {
-            view.updateGuessWordTextView("Y O U   W O N ! :)");
+            view.updateGuessWordTextView("Y O U   W O N !  : )");
         } else {
-            view.updateGuessWordTextView("G A M E   O V E R ! :(");
+            view.updateGuessWordTextView("G A M E   O V E R !  : ( \n Word was: " + currWord);
         }
         view.hideKeyboard();
+        view.displayWinLoseSnackbar(userDidWin);
     }
 
     /**
@@ -233,6 +234,8 @@ class MainPresenter implements WordsAsyncTask.WordsAsyncTaskListener {
         void refreshTriesCount(String triesFormattedInput);
 
         void updateGuessWordTextView(String guessWord);
+
+        void displayWinLoseSnackbar(boolean userDidWin);
 
         void updateIncorrectGuessesTextView(String incorrectGuesses);
 
