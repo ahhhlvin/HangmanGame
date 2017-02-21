@@ -224,36 +224,57 @@ public class MainActivity extends AppCompatActivity implements HangmanInterface.
         incorrectGuessesTextView.setText(incorrectGuesses);
     }
 
+    /**
+     * Displays the head of the hangman
+     */
     @Override
     public void showHead() {
         headImage.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * Displays the left arm of the hangman
+     */
     @Override
     public void showLeftArm() {
         leftArmImage.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * Displays the body of the hangman
+     */
     @Override
     public void showBody() {
         bodyImage.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * Displays the right arm of the hangman
+     */
     @Override
     public void showRightArm() {
         rightArmImage.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * Displays the left leg of the hangman
+     */
     @Override
     public void showLeftLeg() {
         leftLegImage.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * Displays the right leg of the hangman
+     */
     @Override
     public void showRightLeg() {
         rightLegImage.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * Displays the progress bar and fades widgets to let the user know to wait for game to be setup
+     */
     @Override
     public void showProgressBar() {
         progressBar.setVisibility(View.VISIBLE);
@@ -261,6 +282,9 @@ public class MainActivity extends AppCompatActivity implements HangmanInterface.
         newWordButton.setAlpha(0.3f);
     }
 
+    /**
+     *  Hides the progress bar and reenables widget to let the user know that the game is ready
+     */
     @Override
     public void hideProgressBar() {
         progressBar.setVisibility(View.GONE);
@@ -271,6 +295,9 @@ public class MainActivity extends AppCompatActivity implements HangmanInterface.
         guessEditText.setEnabled(true);
     }
 
+    /**
+     * Displays a snackbar to the user notifying them that a new round has been setup
+     */
     @Override
     public void displayNewWordSnackbar() {
         Snackbar.make(coordinatorLayoutView, R.string.new_word_snackmsg, Snackbar.LENGTH_LONG).show();

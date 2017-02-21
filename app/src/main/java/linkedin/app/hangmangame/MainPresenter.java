@@ -130,6 +130,10 @@ class MainPresenter implements WordsAsyncTask.WordsAsyncTaskListener, HangmanInt
 
     }
 
+    /**
+     * For every submission will update the hangman to display a new body part if the guess was incorrect
+     * @param remainingGuesses int representing the number of guesses the user has remaining
+     */
     @Override
     public void updateHangmanImage(int remainingGuesses) {
         switch (remainingGuesses) {
@@ -258,6 +262,9 @@ class MainPresenter implements WordsAsyncTask.WordsAsyncTaskListener, HangmanInt
         hideProgressBar();
     }
 
+    /**
+     * Interface method that calls the view to display the progress bar
+     */
     @Override
     public void hideProgressBar() {
         mView.hideProgressBar();

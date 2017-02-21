@@ -28,6 +28,9 @@ public class HangmanInterface {
         void displayNewWordSnackbar();
     }
 
+    /**
+     * Interface used to communicate between the View and Presenter to call business logic within game
+     */
     interface Presenter {
         void hideProgressBar();
         void setupNewRound();
