@@ -1,12 +1,14 @@
 package linkedin.app.hangmangame;
 
 import java.util.List;
+import java.util.Random;
+import java.util.Set;
 
 /**
  * Created by alvin2 on 2/20/17.
  */
 
-public class HangmanInterface {
+class HangmanInterface {
 
     /**
      * Interface used to communicate between the Presenter and View to update UI components

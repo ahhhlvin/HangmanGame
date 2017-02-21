@@ -17,6 +17,7 @@ import java.util.Set;
 
 class MainPresenter implements WordsAsyncTask.WordsAsyncTaskListener, HangmanInterface.Presenter {
 
+    private HangmanModel mModel;
     private HangmanInterface.View mView;
     private Context mContext;
 
@@ -46,11 +47,15 @@ class MainPresenter implements WordsAsyncTask.WordsAsyncTaskListener, HangmanInt
      * Initializes properties of the MainPresenter object
      */
     void setup() {
-        randomGenerator = new Random();
-        gameWords = new ArrayList<>();
-        wordSet = new HashSet<>();
-        correctGuessSet = new HashSet<>();
-        incorrectChars = new ArrayList<>();
+        mModel = new HangmanModel();
+        randomGenerator = mModel.getRandomGenerator();
+        remainingGuesses = mModel.getRemainingGuesses();
+        currWord = mModel.getCurrWord();
+        guessWordArr = mModel.getGuessWordArr();
+        wordSet = mModel.getWordSet();
+        correctGuessSet = mModel.getCorrectGuessSet();
+        incorrectChars = mModel.getIncorrectChars();
+        gameWords = mModel.getGameWords();
     }
 
     /**
