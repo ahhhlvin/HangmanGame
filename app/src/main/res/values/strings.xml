@@ -8,5 +8,11 @@
     <string name="select_difficulty_text">Select difficulty:</string>
     <string name="new_word_snackmsg">"New guess word has been generated!"</string>
     <string name="bad_submission_snackmsg">"Please enter a valid guess"</string>
+    <string name="head">head</string>
+    <string name="left_arm">left arm</string>
+    <string name="body">body</string>
+    <string name="right_arm">right arm</string>
+    <string name="left_leg">left leg</string>
+    <string name="right_leg">right leg</string>
 
 </resources>

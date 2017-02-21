@@ -17,14 +17,15 @@ public class HangmanInterface {
         void displayWinLoseSnackbar(boolean userDidWin);
         void updateIncorrectGuessesTextView(String incorrectGuesses);
         void hideKeyboard();
-        void hideHead();
-        void hideLeftArm();
-        void hideBody();
-        void hideRightArm();
-        void hideLeftLeg();
-        void hideRightLeg();
+        void showHead();
+        void showLeftArm();
+        void showBody();
+        void showRightArm();
+        void showLeftLeg();
+        void showRightLeg();
         void showProgressBar();
         void hideProgressBar();
+        void displayNewWordSnackbar();
     }
 
     interface Presenter {

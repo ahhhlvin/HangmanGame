@@ -82,6 +82,7 @@ class MainPresenter implements WordsAsyncTask.WordsAsyncTaskListener, HangmanInt
             mView.updateGuessWordTextView(formatGuessWord(guessWordArr));
             incorrectChars.clear();
             mView.updateIncorrectGuessesTextView(incorrectChars.toString());
+            mView.displayNewWordSnackbar();
         }
     }
 
@@ -133,22 +134,22 @@ class MainPresenter implements WordsAsyncTask.WordsAsyncTaskListener, HangmanInt
     public void updateHangmanImage(int remainingGuesses) {
         switch (remainingGuesses) {
             case 0:
-                mView.hideLeftLeg();
+                mView.showLeftLeg();
                 break;
             case 1:
-                mView.hideRightLeg();
+                mView.showRightLeg();
                 break;
             case 2:
-                mView.hideRightArm();
+                mView.showRightArm();
                 break;
             case 3:
-                mView.hideLeftArm();
+                mView.showLeftArm();
                 break;
             case 4:
-                mView.hideBody();
+                mView.showBody();
                 break;
             case 5:
-                mView.hideHead();
+                mView.showHead();
                 break;
         }
     }

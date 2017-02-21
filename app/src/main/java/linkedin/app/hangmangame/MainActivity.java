@@ -7,6 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatSpinner;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -97,20 +99,26 @@ public class MainActivity extends AppCompatActivity implements HangmanInterface.
 
         showProgressBar();
 
+        Animation fabAnim = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_anim);
+        final Animation fabClick = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_click);
+        newWordButton.setAnimation(fabAnim);
         newWordButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                view.startAnimation(fabClick);
+                view.setClickable(false);
                 presenter.setupNewRound();
                 submitButton.setAlpha(1);
                 submitButton.setEnabled(true);
                 guessEditText.setEnabled(true);
                 guessEditText.setVisibility(View.VISIBLE);
-                headImage.setVisibility(View.VISIBLE);
-                leftArmImage.setVisibility(View.VISIBLE);
-                bodyImage.setVisibility(View.VISIBLE);
-                rightArmImage.setVisibility(View.VISIBLE);
-                leftLegImage.setVisibility(View.VISIBLE);
-                rightLegImage.setVisibility(View.VISIBLE);
+                headImage.setVisibility(View.INVISIBLE);
+                leftArmImage.setVisibility(View.INVISIBLE);
+                bodyImage.setVisibility(View.INVISIBLE);
+                rightArmImage.setVisibility(View.INVISIBLE);
+                leftLegImage.setVisibility(View.INVISIBLE);
+                rightLegImage.setVisibility(View.INVISIBLE);
+                view.setClickable(true);
                 Snackbar.make(coordinatorLayoutView, R.string.new_word_snackmsg, Snackbar.LENGTH_LONG).show();
             }
         });
@@ -131,7 +139,6 @@ public class MainActivity extends AppCompatActivity implements HangmanInterface.
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 showProgressBar();
                 presenter.changeLevelDifficulty(adapterView.getSelectedItemPosition());
-                Snackbar.make(coordinatorLayoutView, R.string.new_word_snackmsg, Snackbar.LENGTH_LONG).show();
             }
 
             @Override
@@ -196,9 +203,10 @@ public class MainActivity extends AppCompatActivity implements HangmanInterface.
 
     @Override
     public void displayWinLoseSnackbar(boolean userDidWin) {
-        guessEditText.setVisibility(View.INVISIBLE);
-        submitButton.setEnabled(false);
+        guessEditText.setEnabled(false);
+        guessEditText.setHint("");
         submitButton.setAlpha(0.3f);
+        submitButton.setEnabled(false);
         String message = "";
         if (userDidWin) {
             message = "Congratulations, you won!";
@@ -217,33 +225,33 @@ public class MainActivity extends AppCompatActivity implements HangmanInterface.
     }
 
     @Override
-    public void hideHead() {
-        headImage.setVisibility(View.INVISIBLE);
+    public void showHead() {
+        headImage.setVisibility(View.VISIBLE);
     }
 
     @Override
-    public void hideLeftArm() {
-        leftArmImage.setVisibility(View.INVISIBLE);
+    public void showLeftArm() {
+        leftArmImage.setVisibility(View.VISIBLE);
     }
 
     @Override
-    public void hideBody() {
-        bodyImage.setVisibility(View.INVISIBLE);
+    public void showBody() {
+        bodyImage.setVisibility(View.VISIBLE);
     }
 
     @Override
-    public void hideRightArm() {
-        rightArmImage.setVisibility(View.INVISIBLE);
+    public void showRightArm() {
+        rightArmImage.setVisibility(View.VISIBLE);
     }
 
     @Override
-    public void hideLeftLeg() {
-        leftLegImage.setVisibility(View.INVISIBLE);
+    public void showLeftLeg() {
+        leftLegImage.setVisibility(View.VISIBLE);
     }
 
     @Override
-    public void hideRightLeg() {
-        rightLegImage.setVisibility(View.INVISIBLE);
+    public void showRightLeg() {
+        rightLegImage.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -259,5 +267,12 @@ public class MainActivity extends AppCompatActivity implements HangmanInterface.
         linearLayout.setAlpha(1f);
         newWordButton.setEnabled(true);
         newWordButton.setAlpha(1f);
+        submitButton.setEnabled(true);
+        guessEditText.setEnabled(true);
+    }
+
+    @Override
+    public void displayNewWordSnackbar() {
+        Snackbar.make(coordinatorLayoutView, R.string.new_word_snackmsg, Snackbar.LENGTH_LONG).show();
     }
 }

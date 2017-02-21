@@ -7,10 +7,14 @@
     android:layout_height="match_parent"
     tools:context="linkedin.app.hangmangame.MainActivity">
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
     <LinearLayout
         android:id="@+id/mainLinearLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:alpha="0.3"
         android:orientation="vertical"
         android:paddingLeft="@dimen/activity_horizontal_margin"
@@ -90,7 +94,9 @@
 
         <ImageView
             android:id="@+id/head"
+            android:contentDescription="@string/head"
             android:src="@drawable/head"
+            android:visibility="invisible"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"/>
@@ -103,18 +109,24 @@
 
             <ImageView
                 android:id="@+id/leftArm"
+                android:contentDescription="@string/left_arm"
+                android:visibility="invisible"
                 android:src="@drawable/left_arm"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 
             <ImageView
                 android:id="@+id/body"
+                android:contentDescription="@string/body"
+                android:visibility="invisible"
                 android:src="@drawable/body"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 
             <ImageView
                 android:id="@+id/rightArm"
+                android:contentDescription="@string/right_arm"
+                android:visibility="invisible"
                 android:src="@drawable/right_arm"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
@@ -129,12 +141,16 @@
 
             <ImageView
                 android:id="@+id/leftLeg"
+                android:contentDescription="@string/left_leg"
+                android:visibility="invisible"
                 android:src="@drawable/left_leg"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 
             <ImageView
                 android:id="@+id/rightLeg"
+                android:contentDescription="@string/right_leg"
+                android:visibility="invisible"
                 android:src="@drawable/right_leg"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
@@ -142,6 +158,8 @@
         </LinearLayout>
 
     </LinearLayout>
+
+    </ScrollView>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/newWordButton"
