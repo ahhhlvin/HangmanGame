@@ -80,14 +80,14 @@ class WordsAsyncTask extends AsyncTask<String, Void, String> {
 
     /**
      * Assigns the presenter to be a listener of the WordsTask class for notification of completion
-     * @param presenter MainPresenter object representing the presenter class
+     * @param presenter HangmanPresenter object representing the presenter class
      */
-    void setWordsTaskListener(MainPresenter presenter) {
+    void setWordsAsyncTaskListener(HangmanPresenter presenter) {
         mListener = presenter;
     }
 
     /**
-     * Interface methods for communicating between the MainPresenter and WordsTask to begin game
+     * Interface methods for communicating between the HangmanPresenter and WordsTask to begin game
      */
     interface WordsAsyncTaskListener {
         void loadWords(List<String> gameWords);

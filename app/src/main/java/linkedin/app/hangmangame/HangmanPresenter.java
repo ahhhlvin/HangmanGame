@@ -3,9 +3,7 @@ package linkedin.app.hangmangame;
 import android.content.Context;
 import android.util.Log;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
@@ -15,7 +13,7 @@ import java.util.Set;
  * Created by alvin2 on 2/17/17.
  */
 
-class MainPresenter implements WordsAsyncTask.WordsAsyncTaskListener, HangmanInterface.Presenter {
+class HangmanPresenter implements WordsAsyncTask.WordsAsyncTaskListener, HangmanInterface.Presenter {
 
     private HangmanModel mModel;
     private HangmanInterface.View mView;
@@ -33,18 +31,18 @@ class MainPresenter implements WordsAsyncTask.WordsAsyncTaskListener, HangmanInt
     static final String API_URL = "http://linkedin-reach.hagbpyjegb.us-west-2.elasticbeanstalk.com/words";
 
     /**
-     * Assigns the 'mContext' and 'mView' property of the MainPresenter object
-     * @param view MainPresenter.UI the class that implements the "UI" interface to communicate with business logic
+     * Assigns the 'mContext' and 'mView' property of the HangmanPresenter object
+     * @param view HangmanPresenter.UI the class that implements the "UI" interface to communicate with business logic
      * @param context Context used to access string values in the resources folder
      */
-    public MainPresenter(HangmanInterface.View view, Context context) {
+    public HangmanPresenter(HangmanInterface.View view, Context context) {
         mView = view;
         mContext = context;
         setup();
     }
 
     /**
-     * Initializes properties of the MainPresenter object
+     * Initializes properties of the HangmanPresenter object
      */
     void setup() {
         mModel = new HangmanModel();
@@ -189,7 +187,7 @@ class MainPresenter implements WordsAsyncTask.WordsAsyncTaskListener, HangmanInt
     @Override
     public void changeLevelDifficulty(int difficultyLevel) {
         WordsAsyncTask task = new WordsAsyncTask();
-        task.setWordsTaskListener(this);
+        task.setWordsAsyncTaskListener(this);
         if (difficultyLevel == 0) {
             task.execute(API_URL);
         } else {
@@ -248,8 +246,8 @@ class MainPresenter implements WordsAsyncTask.WordsAsyncTaskListener, HangmanInt
     }
 
     /**
-     * Interface method that assigns all downloaded game words to the property of the MainPresenter
-     * object, communicates between WordsTask and MainPresenter by notifying when task has completed
+     * Interface method that assigns all downloaded game words to the property of the HangmanPresenter
+     * object, communicates between WordsAsyncTask and HangmanPresenter by notifying when task has completed
      * @param gameWords List<String> an ArrayList of type String words representing guess words
      */
     @Override
@@ -258,7 +256,7 @@ class MainPresenter implements WordsAsyncTask.WordsAsyncTaskListener, HangmanInt
     }
 
     /**
-     * Interface method that notifies MainPresenter that the WordsTask has completed on the background
+     * Interface method that notifies HangmanPresenter that the WordsAsyncTask has completed on the background
      * thread and is ready to start a new game
      */
     @Override

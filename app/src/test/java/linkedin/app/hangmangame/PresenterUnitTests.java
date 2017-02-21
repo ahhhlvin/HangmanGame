@@ -5,9 +5,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -16,17 +13,17 @@ import static org.junit.Assert.*;
 
 public class PresenterUnitTests {
 
-    private MainPresenter mockPresenter;
+    private HangmanPresenter mockPresenter;
     private WordsAsyncTask testTask = new WordsAsyncTask();
 
     @Before
     public void testSetup() {
-        mockPresenter = Mockito.mock(MainPresenter.class);
+        mockPresenter = Mockito.mock(HangmanPresenter.class);
         mockPresenter.setup();
         mockPresenter.remainingGuesses = 6;
         mockPresenter.checkSubmission("a");
         testTask = new WordsAsyncTask();
-        testTask.setWordsTaskListener(mockPresenter);
+        testTask.setWordsAsyncTaskListener(mockPresenter);
     }
 
     @After
@@ -39,7 +36,7 @@ public class PresenterUnitTests {
      */
     @Test
     public void testFetchWordsValidUrl() {
-        String result = testTask.fetchWords(new String[]{MainPresenter.API_URL});
+        String result = testTask.fetchWords(new String[]{HangmanPresenter.API_URL});
         assertEquals("SUCCESS", result);
         // TODO: assertNotEquals gameWords != 0
     }
@@ -77,7 +74,7 @@ public class PresenterUnitTests {
         verify(mockPresenter, times(1)).checkSubmission("a");
     }
 
-    // TODO: how to mock and correctly access properties of MainPresenter class?
+    // TODO: how to mock and correctly access properties of HangmanPresenter class?
 //    @Test
 //    public void testTriesTextFormatting() {
 //        mockPresenter.remainingGuesses -= 3;

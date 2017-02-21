@@ -22,7 +22,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements HangmanInterface.View {
+public class HangmanActivity extends AppCompatActivity implements HangmanInterface.View {
 
     private FrameLayout mainLayout;
     private LinearLayout linearLayout;
@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements HangmanInterface.
     private ImageView leftLegImage;
     private ImageView rightLegImage;
 
-    private MainPresenter presenter;
+    private HangmanPresenter presenter;
 
     WordsAsyncTask task;
 
@@ -52,10 +52,10 @@ public class MainActivity extends AppCompatActivity implements HangmanInterface.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        presenter = new MainPresenter(this, getApplicationContext());
+        presenter = new HangmanPresenter(this, getApplicationContext());
         setupViews();
         task = new WordsAsyncTask();
-        task.setWordsTaskListener(presenter);
+        task.setWordsAsyncTaskListener(presenter);
     }
 
     /**
@@ -173,7 +173,7 @@ public class MainActivity extends AppCompatActivity implements HangmanInterface.
         }
     }
 
-    // MainPresenter interface method implementations ////////////////////////////////////////////
+    // HangmanPresenter interface method implementations ////////////////////////////////////////////
 
     /**
      * Programmatically hides keyboard to reveal 'new word' button to start new round
