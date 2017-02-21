@@ -12,24 +12,24 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.support.design.widget.Snackbar;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements MainPresenter.UI {
+public class MainActivity extends AppCompatActivity implements HangmanInterface.View {
 
-    private RelativeLayout mainLayout;
+    private FrameLayout mainLayout;
     private LinearLayout linearLayout;
     private View coordinatorLayoutView;
     private AppCompatSpinner difficultySpinner;
     private TextView triesCounterTextView;
     private TextView guessWordTextView;
     private TextInputEditText guessEditText;
-    private ProgressBar progressBar;
+    private FrameLayout progressBar;
     private Button submitButton;
     private TextView incorrectGuessesTextView;
     private android.support.design.widget.FloatingActionButton newWordButton;
@@ -50,8 +50,7 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.UI 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        presenter = new MainPresenter();
-        presenter.setView(this, getApplicationContext());
+        presenter = new MainPresenter(this, getApplicationContext());
         setupViews();
         task = new WordsAsyncTask();
         task.setWordsTaskListener(presenter);
@@ -61,20 +60,27 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.UI 
      * Initializes the variables as well as instantiating the views and any of their properties.
      */
     public void setupViews() {
-        presenter.setup();
-        mainLayout = (RelativeLayout) findViewById(R.id.activity_main);
+        mainLayout = (FrameLayout) findViewById(R.id.activity_main);
         linearLayout = (LinearLayout) findViewById(R.id.mainLinearLayout);
         coordinatorLayoutView = (CoordinatorLayout) findViewById(R.id.snackbarPosition);
         difficultySpinner = (AppCompatSpinner) findViewById(R.id.difficultySpinner);
-        spinnerSetup();
+
         triesCounterTextView = (TextView) findViewById(R.id.triesCounterTV);
         guessWordTextView = (TextView) findViewById(R.id.guessWordTV);
         guessEditText = (TextInputEditText) findViewById(R.id.guessET);
-        guessEditText.setEnabled(false);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
-
+        progressBar = (FrameLayout) findViewById(R.id.progressBar);
+        newWordButton = (android.support.design.widget.FloatingActionButton) findViewById(R.id.newWordButton);
         submitButton = (Button) findViewById(R.id.submitButton);
-        submitButton.setEnabled(false);
+        headImage = (ImageView) findViewById(R.id.head);
+        leftArmImage = (ImageView) findViewById(R.id.leftArm);
+        bodyImage = (ImageView) findViewById(R.id.body);
+        rightArmImage = (ImageView) findViewById(R.id.rightArm);
+        leftLegImage = (ImageView) findViewById(R.id.leftLeg);
+        rightLegImage = (ImageView) findViewById(R.id.rightLeg);
+        incorrectGuessesTextView = (TextView) findViewById(R.id.incorrectGuessesTV);
+
+        spinnerSetup();
+
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -84,60 +90,48 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.UI 
                     guessEditText.setText("");
                 } else {
                     hideKeyboard();
-                    Snackbar
-                            .make(coordinatorLayoutView, R.string.bad_submission_snackmsg, Snackbar.LENGTH_LONG)
-                            .show();
+                    Snackbar.make(coordinatorLayoutView, R.string.bad_submission_snackmsg, Snackbar.LENGTH_LONG).show();
                 }
             }
         });
 
-        progressBar.setVisibility(View.VISIBLE);
-        incorrectGuessesTextView = (TextView) findViewById(R.id.incorrectGuessesTV);
+        showProgressBar();
 
-        newWordButton = (android.support.design.widget.FloatingActionButton) findViewById(R.id.newWordButton);
-        newWordButton.setEnabled(false);
         newWordButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                presenter.newGame();
-                if (guessEditText.getVisibility() == View.INVISIBLE && !submitButton.isEnabled()) {
-                    guessEditText.setVisibility(View.VISIBLE);
-                    submitButton.setEnabled(true);
-                }
+                presenter.setupNewRound();
+                submitButton.setAlpha(1);
+                submitButton.setEnabled(true);
+                guessEditText.setEnabled(true);
+                guessEditText.setVisibility(View.VISIBLE);
                 headImage.setVisibility(View.VISIBLE);
                 leftArmImage.setVisibility(View.VISIBLE);
                 bodyImage.setVisibility(View.VISIBLE);
                 rightArmImage.setVisibility(View.VISIBLE);
                 leftLegImage.setVisibility(View.VISIBLE);
                 rightLegImage.setVisibility(View.VISIBLE);
-                Snackbar
-                        .make(coordinatorLayoutView, R.string.new_word_snackmsg, Snackbar.LENGTH_LONG)
-                        .show();
+                Snackbar.make(coordinatorLayoutView, R.string.new_word_snackmsg, Snackbar.LENGTH_LONG).show();
             }
         });
 
-        headImage = (ImageView) findViewById(R.id.head);
-        leftArmImage = (ImageView) findViewById(R.id.leftArm);
-        bodyImage = (ImageView) findViewById(R.id.body);
-        rightArmImage = (ImageView) findViewById(R.id.rightArm);
-        leftLegImage = (ImageView) findViewById(R.id.leftLeg);
-        rightLegImage = (ImageView) findViewById(R.id.rightLeg);
+
     }
 
     /**
      * Setup of Adapter for spinner options
      */
     public void spinnerSetup() {
-        final ArrayList<String> difficultyLevels = new ArrayList<>();
-        final ArrayAdapter<String> arrAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, difficultyLevels);
+        final List<String> difficultyLevels = new ArrayList<>();
+        final ArrayAdapter<String> arrAdapter = new ArrayAdapter<String>(this, R.layout.spinner_item, difficultyLevels);
         presenter.spinnerClickSetup(difficultyLevels);
         difficultySpinner.setAdapter(arrAdapter);
         difficultySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                progressBar.setVisibility(View.VISIBLE);
-                linearLayout.setAlpha((float)0.3);
+                showProgressBar();
                 presenter.changeLevelDifficulty(adapterView.getSelectedItemPosition());
+                Snackbar.make(coordinatorLayoutView, R.string.new_word_snackmsg, Snackbar.LENGTH_LONG).show();
             }
 
             @Override
@@ -175,19 +169,6 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.UI 
     // MainPresenter interface method implementations ////////////////////////////////////////////
 
     /**
-     * Enables the text field and buttons after network call to API is completed, and disables
-     * progress bar
-     */
-    @Override
-    public void setGameReadyUI() {
-        progressBar.setVisibility(View.INVISIBLE);
-        linearLayout.setAlpha(1);
-        guessEditText.setEnabled(true);
-        submitButton.setEnabled(true);
-        newWordButton.setEnabled(true);
-    }
-
-    /**
      * Programmatically hides keyboard to reveal 'new word' button to start new round
      */
     @Override
@@ -217,15 +198,14 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.UI 
     public void displayWinLoseSnackbar(boolean userDidWin) {
         guessEditText.setVisibility(View.INVISIBLE);
         submitButton.setEnabled(false);
+        submitButton.setAlpha(0.3f);
         String message = "";
         if (userDidWin) {
             message = "Congratulations, you won!";
         } else {
             message = "Aww great attempt though, how about trying again?";
         }
-        Snackbar
-                .make(coordinatorLayoutView, message, Snackbar.LENGTH_LONG)
-                .show();
+        Snackbar.make(coordinatorLayoutView, message, Snackbar.LENGTH_LONG).show();
     }
 
     /**
@@ -264,5 +244,20 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.UI 
     @Override
     public void hideRightLeg() {
         rightLegImage.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void showProgressBar() {
+        progressBar.setVisibility(View.VISIBLE);
+        linearLayout.setAlpha(0.3f);
+        newWordButton.setAlpha(0.3f);
+    }
+
+    @Override
+    public void hideProgressBar() {
+        progressBar.setVisibility(View.GONE);
+        linearLayout.setAlpha(1f);
+        newWordButton.setEnabled(true);
+        newWordButton.setAlpha(1f);
     }
 }

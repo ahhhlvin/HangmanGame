@@ -4,7 +4,6 @@
     <string name="music_taste">%1$s @string/guess_remaining_text</string>
     <string name="incorrect_guess_text">Incorrect guesses:</string>
     <string name="submit_button_text">SUBMIT</string>
-    <string name="new_button_text">NEW WORD</string>
     <string name="edittext_example">Enter letter OR word</string>
     <string name="select_difficulty_text">Select difficulty:</string>
     <string name="new_word_snackmsg">"New guess word has been generated!"</string>

@@ -1,7 +1,6 @@
 package linkedin.app.hangmangame;
 
 import android.content.Context;
-import android.os.Bundle;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -10,35 +9,37 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
+import java.util.Set;
 
 /**
  * Created by alvin2 on 2/17/17.
  */
 
-class MainPresenter implements WordsAsyncTask.WordsAsyncTaskListener {
+class MainPresenter implements WordsAsyncTask.WordsAsyncTaskListener, HangmanInterface.Presenter {
 
-    private MainPresenter.UI view;
-    private Context context;
+    private HangmanInterface.View mView;
+    private Context mContext;
 
     private Random randomGenerator;
     int remainingGuesses = 6;
     private String currWord;
     private char[] guessWordArr;
-    private HashSet<String> wordSet;
-    private HashSet<String> correctGuessSet;
-    private ArrayList<String> incorrectChars;
+    private Set<String> wordSet;
+    private Set<String> correctGuessSet;
+    private List<String> incorrectChars;
     private List<String> gameWords;
 
     static final String API_URL = "http://linkedin-reach.hagbpyjegb.us-west-2.elasticbeanstalk.com/words";
 
     /**
-     * Assigns the 'context' and 'view' property of the MainPresenter object
+     * Assigns the 'mContext' and 'mView' property of the MainPresenter object
      * @param view MainPresenter.UI the class that implements the "UI" interface to communicate with business logic
      * @param context Context used to access string values in the resources folder
      */
-    void setView(MainPresenter.UI view, Context context) {
-        this.view = view;
-        this.context = context;
+    public MainPresenter(HangmanInterface.View view, Context context) {
+        mView = view;
+        mContext = context;
+        setup();
     }
 
     /**
@@ -56,12 +57,13 @@ class MainPresenter implements WordsAsyncTask.WordsAsyncTaskListener {
      * Creates a new round by retrieving another word from the list of possible word
      * choices and resets necessary values back to their initial values.
      */
-    void newGame() {
+    @Override
+    public void setupNewRound() {
         if (gameWords.size() > 0) {
             int wordIndex = randomGenerator.nextInt(gameWords.size());
             currWord = gameWords.get(wordIndex);
             remainingGuesses = 6;
-            view.refreshTriesCount(formatTriesString(remainingGuesses));
+            mView.refreshTriesCount(formatTriesString(remainingGuesses));
             correctGuessSet.clear();
             wordSet.clear();
 
@@ -77,9 +79,9 @@ class MainPresenter implements WordsAsyncTask.WordsAsyncTaskListener {
                 guessWordArr[i] = '_';
             }
 
-            view.updateGuessWordTextView(formatGuessWord(guessWordArr));
+            mView.updateGuessWordTextView(formatGuessWord(guessWordArr));
             incorrectChars.clear();
-            view.updateIncorrectGuessesTextView(incorrectChars.toString());
+            mView.updateIncorrectGuessesTextView(incorrectChars.toString());
         }
     }
 
@@ -89,7 +91,8 @@ class MainPresenter implements WordsAsyncTask.WordsAsyncTaskListener {
      *
      * @param input the single letter character or full word the user submitted in the text field
      */
-    void checkSubmission(String input) {
+    @Override
+    public void checkSubmission(String input) {
 
         // prevents submission checking if same incorrect guess is submitted multiple times
         if (!incorrectChars.contains(input)) {
@@ -98,10 +101,10 @@ class MainPresenter implements WordsAsyncTask.WordsAsyncTaskListener {
                 // word, subtract from remaining guesses and add to incorrectly guessed characters list
                 if (input.length() == 1 && !wordSet.contains(input) || input.length() > 1 && !currWord.equals(input)) {
                     incorrectChars.add(input);
-                    view.updateIncorrectGuessesTextView(incorrectChars.toString());
+                    mView.updateIncorrectGuessesTextView(incorrectChars.toString());
                     remainingGuesses--;
                     updateHangmanImage(remainingGuesses);
-                    view.refreshTriesCount(formatTriesString(remainingGuesses));
+                    mView.refreshTriesCount(formatTriesString(remainingGuesses));
                     // if there are no guesses remaining then the game has ended and the user has lost
                     if (remainingGuesses == 0) {
                         displayWinLoseMessage(false);
@@ -114,7 +117,7 @@ class MainPresenter implements WordsAsyncTask.WordsAsyncTaskListener {
                             correctGuessSet.add(String.valueOf(currWord.charAt(i)));
                         }
                     }
-                    view.updateGuessWordTextView(formatGuessWord(guessWordArr));
+                    mView.updateGuessWordTextView(formatGuessWord(guessWordArr));
                     checkWordMatchesGuess();
                 } else if (input.length() > 1 && currWord.equals(input)) {
                     // case where the current submitted guess word does match the actual game word
@@ -125,27 +128,36 @@ class MainPresenter implements WordsAsyncTask.WordsAsyncTaskListener {
         }
 
     }
-    
-    void updateHangmanImage(int remainingGuesses) {
-        if (remainingGuesses == 5) {
-            view.hideHead();
-        } else if (remainingGuesses == 4) {
-            view.hideLeftArm();
-        } else if (remainingGuesses == 3) {
-            view.hideBody();
-        } else if (remainingGuesses == 2) {
-            view.hideRightArm();
-        } else if (remainingGuesses == 1) {
-            view.hideLeftLeg();
-        } else {
-            view.hideRightLeg();
+
+    @Override
+    public void updateHangmanImage(int remainingGuesses) {
+        switch (remainingGuesses) {
+            case 0:
+                mView.hideLeftLeg();
+                break;
+            case 1:
+                mView.hideRightLeg();
+                break;
+            case 2:
+                mView.hideRightArm();
+                break;
+            case 3:
+                mView.hideLeftArm();
+                break;
+            case 4:
+                mView.hideBody();
+                break;
+            case 5:
+                mView.hideHead();
+                break;
         }
     }
 
     /**
      * Responsible for spinner logic in selecting difficulty of guess words pulled from API
      */
-    void spinnerClickSetup(ArrayList<String> difficultyLevels) {
+    @Override
+    public void spinnerClickSetup(List<String> difficultyLevels) {
         difficultyLevels.add("Random difficulty");
         for (int i = 1; i <= 10; i++) {
             if (i == 1) {
@@ -164,7 +176,8 @@ class MainPresenter implements WordsAsyncTask.WordsAsyncTaskListener {
      * @param difficultyLevel int represents the difficulty level that the user selected from the
      *                        spinner
      */
-    void changeLevelDifficulty(int difficultyLevel) {
+    @Override
+    public void changeLevelDifficulty(int difficultyLevel) {
         WordsAsyncTask task = new WordsAsyncTask();
         task.setWordsTaskListener(this);
         if (difficultyLevel == 0) {
@@ -195,14 +208,14 @@ class MainPresenter implements WordsAsyncTask.WordsAsyncTaskListener {
     /**
      * Displays a message to notify that the user has lost the current round
      */
-    private void displayWinLoseMessage(boolean userDidWin) {
+    public void displayWinLoseMessage(boolean userDidWin) {
         if (userDidWin) {
-            view.updateGuessWordTextView("Y O U   W O N !  : )");
+            mView.updateGuessWordTextView("Y O U   W O N !  : )");
         } else {
-            view.updateGuessWordTextView("G A M E   O V E R !  : ( \n Word was: " + currWord);
+            mView.updateGuessWordTextView("G A M E   O V E R !  : ( \n Word was: " + currWord);
         }
-        view.hideKeyboard();
-        view.displayWinLoseSnackbar(userDidWin);
+        mView.hideKeyboard();
+        mView.displayWinLoseSnackbar(userDidWin);
     }
 
     /**
@@ -211,7 +224,7 @@ class MainPresenter implements WordsAsyncTask.WordsAsyncTaskListener {
      * @return String concatenated and formatted text to display
      */
     private String formatTriesString(int remainingTries) {
-        return String.format(Locale.US, "%1$s %2$d", context.getResources().getString(R.string.guess_remaining_text), remainingTries);
+        return String.format(Locale.US, "%1$s %2$d", mContext.getResources().getString(R.string.guess_remaining_text), remainingTries);
     }
 
     /**
@@ -240,36 +253,12 @@ class MainPresenter implements WordsAsyncTask.WordsAsyncTaskListener {
      */
     @Override
     public void downloadTaskCompleted() {
-        newGame();
-        view.setGameReadyUI();
+        setupNewRound();
+        hideProgressBar();
     }
 
-    /**
-     * Interface used to communicate between the Presenter and View to update UI components
-     */
-    interface UI {
-        void refreshTriesCount(String triesFormattedInput);
-
-        void updateGuessWordTextView(String guessWord);
-
-        void displayWinLoseSnackbar(boolean userDidWin);
-
-        void updateIncorrectGuessesTextView(String incorrectGuesses);
-
-        void setGameReadyUI();
-
-        void hideKeyboard();
-
-        void hideHead();
-
-        void hideLeftArm();
-
-        void hideBody();
-
-        void hideRightArm();
-
-        void hideLeftLeg();
-
-        void hideRightLeg();
+    @Override
+    public void hideProgressBar() {
+        mView.hideProgressBar();
     }
 }

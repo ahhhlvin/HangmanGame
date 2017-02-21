@@ -107,7 +107,7 @@ public class PresenterUnitTests {
 //        mockPresenter.wordSet.add("l");
 //        mockPresenter.wordSet.add("l");
 //        mockPresenter.wordSet.add("o");
-//        mockPresenter.newGame();
+//        mockPresenter.setupNewRound();
 //        assertEquals(6, mockPresenter.remainingGuesses);
 //        assertEquals("", mockPresenter.incorrectChars);
 //        assertEquals(0, mockPresenter.correctGuessSet.size());
