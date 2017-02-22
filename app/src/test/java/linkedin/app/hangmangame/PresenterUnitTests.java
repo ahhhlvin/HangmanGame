@@ -19,8 +19,6 @@ public class PresenterUnitTests {
     @Before
     public void testSetup() {
         mockPresenter = Mockito.mock(HangmanPresenter.class);
-        mockPresenter.setup();
-        mockPresenter.remainingGuesses = 6;
         mockPresenter.checkSubmission("a");
         testTask = new WordsAsyncTask();
         testTask.setWordsAsyncTaskListener(mockPresenter);
@@ -28,7 +26,6 @@ public class PresenterUnitTests {
 
     @After
     public void testCleanup(){
-
     }
 
     /**
@@ -63,7 +60,7 @@ public class PresenterUnitTests {
      */
     @Test
     public void testCheckInvalidSubmission() {
-        verify(mockPresenter, times(0)).checkSubmission("asdjl");
+        verify(mockPresenter, times(0)).checkSubmission("asdjl?");
     }
 
     /**
@@ -73,42 +70,4 @@ public class PresenterUnitTests {
     public void testCheckNonEmptySubmission() {
         verify(mockPresenter, times(1)).checkSubmission("a");
     }
-
-    // TODO: how to mock and correctly access properties of HangmanPresenter class?
-//    @Test
-//    public void testTriesTextFormatting() {
-//        mockPresenter.remainingGuesses -= 3;
-//        String remainingGuessesText = mockPresenter.formatTriesString(mockPresenter.remainingGuesses);
-//        assertEquals("Remaining guesses: 3", remainingGuessesText);
-//    }
-
-    // TODO: complicated method :(
-//    @Test
-//    public void testCheckSubmission() {
-//        mockPresenter.checkSubmission("a");
-//        assertEquals(5, mockPresenter.remainingGuesses);
-//        assertEquals("a ", mockPresenter.incorrectChars);
-//    }
-
-//    @Test
-//    public void testNewGame() {
-//        mockPresenter.remainingGuesses -= 3;
-//        mockPresenter.incorrectChars = "a b c d ";
-//        mockPresenter.correctGuessSet.add("h");
-//        mockPresenter.correctGuessSet.add("e");
-//        mockPresenter.correctGuessSet.add("l");
-//        mockPresenter.correctGuessSet.add("l");
-//        mockPresenter.correctGuessSet.add("_");
-//        mockPresenter.wordSet.add("h");
-//        mockPresenter.wordSet.add("e");
-//        mockPresenter.wordSet.add("l");
-//        mockPresenter.wordSet.add("l");
-//        mockPresenter.wordSet.add("o");
-//        mockPresenter.setupNewRound();
-//        assertEquals(6, mockPresenter.remainingGuesses);
-//        assertEquals("", mockPresenter.incorrectChars);
-//        assertEquals(0, mockPresenter.correctGuessSet.size());
-//        assertEquals(0, mockPresenter.wordSet.size());
-//    }
-
 }
