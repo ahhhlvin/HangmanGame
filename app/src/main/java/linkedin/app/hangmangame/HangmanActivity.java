@@ -1,6 +1,7 @@
 package linkedin.app.hangmangame;
 
 import android.content.Context;
+import android.media.Image;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
@@ -40,6 +41,7 @@ public class HangmanActivity extends AppCompatActivity implements HangmanInterfa
     private ImageView leftArmImage;
     private ImageView bodyImage;
     private ImageView rightArmImage;
+    private ImageView helloBubbleImage;
     private ImageView leftLegImage;
     private ImageView rightLegImage;
 
@@ -77,6 +79,7 @@ public class HangmanActivity extends AppCompatActivity implements HangmanInterfa
         leftArmImage = (ImageView) findViewById(R.id.leftArm);
         bodyImage = (ImageView) findViewById(R.id.body);
         rightArmImage = (ImageView) findViewById(R.id.rightArm);
+        helloBubbleImage = (ImageView) findViewById(R.id.hello);
         leftLegImage = (ImageView) findViewById(R.id.leftLeg);
         rightLegImage = (ImageView) findViewById(R.id.rightLeg);
         incorrectGuessesTextView = (TextView) findViewById(R.id.incorrectGuessesTV);
@@ -87,7 +90,7 @@ public class HangmanActivity extends AppCompatActivity implements HangmanInterfa
             @Override
             public void onClick(View view) {
                 String guessSubmission = guessEditText.getText().toString();
-                if (!guessSubmission.isEmpty()) {
+                if (!guessSubmission.isEmpty() && guessSubmission.matches("[a-z]+")) {
                     presenter.checkSubmission(guessSubmission.toLowerCase());
                     guessEditText.setText("");
                 } else {
@@ -116,6 +119,7 @@ public class HangmanActivity extends AppCompatActivity implements HangmanInterfa
                 leftArmImage.setVisibility(View.INVISIBLE);
                 bodyImage.setVisibility(View.INVISIBLE);
                 rightArmImage.setVisibility(View.INVISIBLE);
+                helloBubbleImage.setVisibility(View.INVISIBLE);
                 leftLegImage.setVisibility(View.INVISIBLE);
                 rightLegImage.setVisibility(View.INVISIBLE);
                 view.setClickable(true);
@@ -139,6 +143,8 @@ public class HangmanActivity extends AppCompatActivity implements HangmanInterfa
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 showProgressBar();
                 presenter.changeLevelDifficulty(adapterView.getSelectedItemPosition());
+                submitButton.setAlpha(1f);
+
             }
 
             @Override
@@ -229,6 +235,7 @@ public class HangmanActivity extends AppCompatActivity implements HangmanInterfa
      */
     @Override
     public void showHead() {
+        helloBubbleImage.setVisibility(View.VISIBLE);
         headImage.setVisibility(View.VISIBLE);
     }
 

@@ -15,7 +15,6 @@ import java.util.Set;
 
 class HangmanPresenter implements WordsAsyncTask.WordsAsyncTaskListener, HangmanInterface.Presenter {
 
-    private HangmanModel mModel;
     private HangmanInterface.View mView;
     private Context mContext;
 
@@ -35,7 +34,7 @@ class HangmanPresenter implements WordsAsyncTask.WordsAsyncTaskListener, Hangman
      * @param view HangmanPresenter.UI the class that implements the "UI" interface to communicate with business logic
      * @param context Context used to access string values in the resources folder
      */
-    public HangmanPresenter(HangmanInterface.View view, Context context) {
+    HangmanPresenter(HangmanInterface.View view, Context context) {
         mView = view;
         mContext = context;
         setup();
@@ -45,7 +44,7 @@ class HangmanPresenter implements WordsAsyncTask.WordsAsyncTaskListener, Hangman
      * Initializes properties of the HangmanPresenter object
      */
     void setup() {
-        mModel = new HangmanModel();
+        HangmanModel mModel = new HangmanModel();
         randomGenerator = mModel.getRandomGenerator();
         remainingGuesses = mModel.getRemainingGuesses();
         currWord = mModel.getCurrWord();
