@@ -115,19 +115,26 @@ public class HangmanActivity extends AppCompatActivity implements HangmanInterfa
                 submitButton.setEnabled(true);
                 guessEditText.setEnabled(true);
                 guessEditText.setVisibility(View.VISIBLE);
-                headImage.setVisibility(View.INVISIBLE);
-                leftArmImage.setVisibility(View.INVISIBLE);
-                bodyImage.setVisibility(View.INVISIBLE);
-                rightArmImage.setVisibility(View.INVISIBLE);
-                helloBubbleImage.setVisibility(View.INVISIBLE);
-                leftLegImage.setVisibility(View.INVISIBLE);
-                rightLegImage.setVisibility(View.INVISIBLE);
+                resetHangmanDrawing();
                 view.setClickable(true);
                 Snackbar.make(coordinatorLayoutView, R.string.new_word_snackmsg, Snackbar.LENGTH_LONG).show();
             }
         });
 
 
+    }
+
+    /**
+     * Resets the current hangman drawn to it's initial blank state
+     */
+    void resetHangmanDrawing() {
+        headImage.setVisibility(View.INVISIBLE);
+        leftArmImage.setVisibility(View.INVISIBLE);
+        bodyImage.setVisibility(View.INVISIBLE);
+        rightArmImage.setVisibility(View.INVISIBLE);
+        helloBubbleImage.setVisibility(View.INVISIBLE);
+        leftLegImage.setVisibility(View.INVISIBLE);
+        rightLegImage.setVisibility(View.INVISIBLE);
     }
 
     /**
@@ -143,6 +150,7 @@ public class HangmanActivity extends AppCompatActivity implements HangmanInterfa
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 showProgressBar();
                 presenter.changeLevelDifficulty(adapterView.getSelectedItemPosition());
+                resetHangmanDrawing();
                 submitButton.setAlpha(1f);
 
             }
