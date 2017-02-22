@@ -2,7 +2,7 @@
 
 ##Instructions for running the HangmanGame Android app:
 
-###Running with zipped project file through Android Studio on computer:
+#####Running with zipped project file through Android Studio on computer:
 - From the email, please drag the zipped project file named ‘HangmanGame’ to your desktop and unzip it to reveal all the project files.
 - To run my Hangman Android app, you must have AndroidStudio installed on your computer. From there, click “import project” and select the unzipped project folder from the desktop —> select “import from existing model — gradel”.
 - At this point, if you have an Android device you would like to test on, please connect it via USB to the laptop and confirm that it is being recognized by the computer, otherwise continue on to learn how to setup a virtual device on the laptop to run it.
@@ -12,8 +12,8 @@
 	- If you don’t have a physical Android device to run on, then select the “Create New Virtual Device” button at the bottom of the dialog box —> select “Nexus 6P” —> click “Next” at the bottom right —> click “Next at the bottom right —> click “Finish” at the bottom right —> you will be brought back to the same “Select Deployment Target” dialog where now you should see the “Nexus 6P” listed under “Available Virtual Devices” —> select that device name
 - Click the “OK” button at the bottom right of the dialog — and viola the app should now be either running on your physical Android device that is connected or a virtual one on the computer! 
 
-###Running directly on Android device using APK:
-Open the email on the Android device —> click the .apk file attachment from the email —> select install and follow prompts —> app should start! 
+#####Running directly on Android device using APK:
+- Open the email on the Android device —> click the .apk file attachment from the email —> select install and follow prompts —> app should start! 
 
 
 ##Project code structure
