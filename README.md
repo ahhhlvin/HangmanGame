@@ -2,7 +2,7 @@
 
 ##Instructions for running the HangmanGame Android app:
 
-Running with zipped project file through Android Studio on computer:
+</u>Running with zipped project file through Android Studio on computer:</u>
 From the email, please drag the zipped project file named ‘HangmanGame’ to your desktop and unzip it to reveal all the project files.
 To run my Hangman Android app, you must have AndroidStudio installed on your computer. From there, click “import project” and select the unzipped project folder from the desktop —> select “import from existing model — gradel”.
 At this point, if you have an Android device you would like to test on, please connect it via USB to the laptop and confirm that it is being recognized by the computer, otherwise continue on to learn how to setup a virtual device on the laptop to run it.
@@ -12,7 +12,7 @@ If you have connected an Android device to the laptop to run the app at this poi
 	- If you don’t have a physical Android device to run on, then select the “Create New Virtual Device” button at the bottom of the dialog box —> select “Nexus 6P” —> click “Next” at the bottom right —> click “Next at the bottom right —> click “Finish” at the bottom right —> you will be brought back to the same “Select Deployment Target” dialog where now you should see the “Nexus 6P” listed under “Available Virtual Devices” —> select that device name
 Click the “OK” button at the bottom right of the dialog — and viola the app should now be either running on your physical Android device that is connected or a virtual one on the computer! 
 
-Running directly on Android device using APK:
+<u>Running directly on Android device using APK:</u>
 Open the email on the Android device —> click the .apk file attachment from the email —> select install and follow prompts —> app should start! 
 
 
@@ -32,5 +32,5 @@ My HangmanGame app includes the following features/extensions:
 - The user may select a specific word difficulty if they have a preference, otherwise, the default difficulty will be random on each game
 - Within one game, the user has 6 attempts to guess either individual letters the word could contain or the entire word itself, however, with every incorrect guess a body part of the hangman will be revealed.
 - If all 6 attempts have been used and the entire hangman is revealed without the full word being guessed, the user has lost the game. =(
-- If the full word is guessed without using all 6 attempts, then the user has won the game! =)
+- If the full word is guessed without using all 6 attempts then the user has won the game! =)
 - The user can then start a new round by either selecting another difficulty level or pressing the refresh button at the top right corner.
