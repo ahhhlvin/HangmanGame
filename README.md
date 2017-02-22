@@ -1,6 +1,6 @@
 # HangmanGame Android App (LinkedIn REACH Project)
 
-#Instructions for running the HangmanGame Android app:
+##Instructions for running the HangmanGame Android app:
 
 Running with zipped project file through Android Studio on computer:
 From the email, please drag the zipped project file named ‘HangmanGame’ to your desktop and unzip it to reveal all the project files.
@@ -16,18 +16,18 @@ Running directly on Android device using APK:
 Open the email on the Android device —> click the .apk file attachment from the email —> select install and follow prompts —> app should start! 
 
 
-Project code structure
+##Project code structure
 I designed my Hangman app using the MVP design pattern, which utilizes a clean separation of a Model, View, and Presenter class. The Model class (HangmanModel) represents an instance of the hangman game including all necessary properties. The View class (HangmanActivity) represents all the widgets that are displayed to the user as part of the game interface, which will receive input events. The Presenter class (HangmanPresenter) represents all the business logic that goes on behind the scenes for the game to function. I chose to use this design pattern because it utilizes an organized format for the code that also provides the benefit of easy unit testing since all the logic that needs to be tested exists within the Presenter class (as opposed to randomly sprinkled throughout a large file). I had the time to implement a few unit tests which can be found in the PresenterUnitTests class within the “linkedin.app.hangmangame (test)” located under the “java” folder . My app also implements interfaces which help abstract out the communication between the view that the user interacts with and the presenter that performs the necessary logic based on the user’s actions. This proves beneficial in allowing for easier code refactoring and modifications in the future, without requiring an engineer to scour through every line of the project to make even the simplest change. Lastly, I chose to implement a material design inspired feel to the app with my favorite color (blue!) to give the app a more native Android look that is personalized. 
 
 
-#Project features and extensions
+##Project features and extensions
 My HangmanGame app includes the following features/extensions:
 - ability to select the difficulty of words the user can guess 
 - displaying the appearance of hangman’s body parts upon incorrect guess submissions
 - freedom to guess both individual characters of entire words
 
 
-#Game instructions
+##Game instructions
 - Once the app is opened, a new word of random difficulty will be retrieved and ready for the user to guess after the loading bar has disappeared.
 - The user may select a specific word difficulty if they have a preference, otherwise, the default difficulty will be random on each game
 - Within one game, the user has 6 attempts to guess either individual letters the word could contain or the entire word itself, however, with every incorrect guess a body part of the hangman will be revealed.
