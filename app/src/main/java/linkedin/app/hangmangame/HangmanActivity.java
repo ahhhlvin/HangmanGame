@@ -90,7 +90,7 @@ public class HangmanActivity extends AppCompatActivity implements HangmanInterfa
             @Override
             public void onClick(View view) {
                 String guessSubmission = guessEditText.getText().toString();
-                if (!guessSubmission.isEmpty() && guessSubmission.matches("[a-z]+")) {
+                if (!guessSubmission.isEmpty() && guessSubmission.matches("[a-z]+") && (guessSubmission.length() == 1 || guessSubmission.length() == presenter.currWord.length())) {
                     presenter.checkSubmission(guessSubmission.toLowerCase());
                     guessEditText.setText("");
                 } else {
@@ -295,6 +295,7 @@ public class HangmanActivity extends AppCompatActivity implements HangmanInterfa
         progressBar.setVisibility(View.VISIBLE);
         linearLayout.setAlpha(0.3f);
         newWordButton.setAlpha(0.3f);
+        guessEditText.setEnabled(false);
     }
 
     /**
