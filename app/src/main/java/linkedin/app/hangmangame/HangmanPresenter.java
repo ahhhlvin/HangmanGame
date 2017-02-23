@@ -19,7 +19,7 @@ class HangmanPresenter implements WordsAsyncTask.WordsAsyncTaskListener, Hangman
     private Context mContext;
 
     private Random randomGenerator;
-    int remainingGuesses = 6;
+    private int remainingGuesses = 6;
     private String currWord;
     private char[] guessWordArr;
     private Set<String> wordSet;

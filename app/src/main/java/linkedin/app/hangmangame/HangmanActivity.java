@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatSpinner;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
@@ -53,7 +54,7 @@ public class HangmanActivity extends AppCompatActivity implements HangmanInterfa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         presenter = new HangmanPresenter(this, getApplicationContext());
         setupViews();
         task = new WordsAsyncTask();
@@ -66,9 +67,8 @@ public class HangmanActivity extends AppCompatActivity implements HangmanInterfa
     public void setupViews() {
         mainLayout = (FrameLayout) findViewById(R.id.activity_main);
         linearLayout = (LinearLayout) findViewById(R.id.mainLinearLayout);
-        coordinatorLayoutView = (CoordinatorLayout) findViewById(R.id.snackbarPosition);
+        coordinatorLayoutView = findViewById(R.id.snackbarPosition);
         difficultySpinner = (AppCompatSpinner) findViewById(R.id.difficultySpinner);
-
         triesCounterTextView = (TextView) findViewById(R.id.triesCounterTV);
         guessWordTextView = (TextView) findViewById(R.id.guessWordTV);
         guessEditText = (TextInputEditText) findViewById(R.id.guessET);
