@@ -4,7 +4,7 @@
 
 #####Running with zipped project file through Android Studio on computer:
 - From the email, please drag the zipped project file named ‘HangmanGame’ to your desktop and unzip it to reveal all the project files.
-- To run my Hangman Android app, you must have AndroidStudio installed on your computer. From there, click “import project” and select the unzipped project folder from the desktop —> select “import from existing model — gradel”.
+- To run my Hangman Android app, you must have AndroidStudio installed on your computer. From there, click “import project” and select the unzipped project folder from the desktop —> select “import from existing model — gradle” if prompted.
 - At this point, if you have an Android device you would like to test on, please connect it via USB to the laptop and confirm that it is being recognized by the computer, otherwise continue on to learn how to setup a virtual device on the laptop to run it.
 - Once Android Studio has been setup with all the project files and assets, please locate the menu bar at the top of your mac, and select the dropdown for “Run” —> select the green play button option that says Run ‘app’.
 - If you have connected an Android device to the laptop to run the app at this point, a dialog should pop up displaying any available Android devices that can run the app. 
